@@ -27,9 +27,11 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     mapping(uint256 => uint256) resourcesTimer;
 
-    constructor(address erc721, address steel, address quartz, address tritium, address _owner) {
-        _initializer(erc721, steel, quartz, tritium, _owner);
+    constructor(address erc721, address steel, address quartz, address tritium) {
+        _initializer(erc721, steel, quartz, tritium);
     }
+
+    receive() external payable {}
 
     // View Functions
     function getTokenAddresses() external view returns (Tokens memory tokens) {
@@ -67,14 +69,14 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function getSpendableResources(uint256 planetId) external view returns (ERC20s memory resurces) {
         Interfaces memory interfaces = _getInterfaces();
         ERC20s memory amounts;
-        address account = _getTokenOwner(planetId);
+        address account = interfaces.erc721.ownerOf(planetId);
         amounts.steel = interfaces.steel.balanceOf(account);
         amounts.quartz = interfaces.quartz.balanceOf(account);
         amounts.tritium = interfaces.tritium.balanceOf(account);
         return amounts;
     }
 
-    function getCollectibleResources(uint256 planetId) external view returns (ERC20s memory resources) {
+    function getCollectibleResources(uint256 planetId) public view returns (ERC20s memory resources) {
         ERC20s memory _resources;
         uint256 timeElapsed = _timeSinceLastCollection(planetId);
         _resources.steel = steelProduction(steelMineLevel[planetId] * timeElapsed / 3600);
@@ -87,7 +89,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function generatePlanet() external payable {
         ISTERC721 erc721 = ISTERC721(erc721Address);
         require(erc721.balanceOf(msg.sender) == 0, "MAX_PLANET_PER_ADDRESS");
+        require(msg.value >= _price, "NOT_ENOUGH_ETHER");
         erc721.mint(msg.sender, numberOfPlanets + 1);
+        numberOfPlanets += 1;
         _mintInitialLiquidity(msg.sender);
     }
 
@@ -95,7 +99,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         ERC20s memory amounts = getCollectibleResources(planetId);
         _payResourcesERC20(msg.sender, amounts);
-        resourcesTimer[planetId] = time.now;
+        resourcesTimer[planetId] = block.timestamp;
     }
 
     function steelMineUpgrade() external {
@@ -103,6 +107,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         ERC20s memory cost = steelMineCost(steelMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
         steelMineLevel[planetId] += 1;
     }
 
@@ -111,6 +116,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         ERC20s memory cost = quartzMineCost(quartzMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
         quartzMineLevel[planetId] += 1;
     }
 
@@ -119,14 +125,16 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         ERC20s memory cost = tritiumMineCost(tritiumMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
         tritiumMineLevel[planetId] += 1;
     }
 
     function energyPlantUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = energyPlantMineCost(energyPlantLevel[planetId]);
+        ERC20s memory cost = energyPlantCost(energyPlantLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
         energyPlantLevel[planetId] += 1;
     }
 
@@ -135,6 +143,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         ERC20s memory cost = dockyardCost(dockyardLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
         dockyardLevel[planetId] += 1;
     }
 
@@ -143,24 +152,21 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         ERC20s memory cost = labCost(labLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
         labLevel[planetId] += 1;
     }
 
     // Internal Functions
-    function _initializer(address erc721, address steel, address quartz, address tritium, address _owner)
-        internal
-        virtual
-    {
+    function _initializer(address erc721, address steel, address quartz, address tritium) internal virtual {
         erc721Address = erc721;
         steelAddress = steel;
         quartzAddress = quartz;
         tritiumAddress = tritium;
-        owner = payable(_owner);
     }
 
-    function _getTokenOwner(uint256 tokenId) internal view returns (address) {
+    function _getTokenOwner(address account) internal view returns (uint256) {
         ISTERC721 erc721 = ISTERC721(erc721Address);
-        return erc721.tokenOf(tokenId);
+        return erc721.tokenOf(account);
     }
 
     function _getInterfaces() internal view returns (Interfaces memory) {
@@ -210,7 +216,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function _payResourcesERC20(address caller, ERC20s memory amounts) internal {
         Interfaces memory interfaces = _getInterfaces();
         if (amounts.steel > 0) {
-            require(interfaces.steel.balanceOf(caller) >= amounts.steel2, "NOT_ENOUGH_STEEL");
+            require(interfaces.steel.balanceOf(caller) >= amounts.steel, "NOT_ENOUGH_STEEL");
             interfaces.steel.burn(caller, amounts.steel);
         }
         if (amounts.quartz > 0) {
@@ -222,4 +228,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
             interfaces.tritium.burn(caller, amounts.tritium);
         }
     }
+
+    function _updateResourcesSpent(uint256 planetId, ERC20s memory cost) internal {
+        resourcesSpent[planetId] += (cost.steel + cost.quartz);
+    }
+
 }
