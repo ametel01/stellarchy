@@ -33,7 +33,7 @@ contract Compounds is Structs {
     function tritiumMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
         ERC20s memory cost;
         cost.steel = 225 * (15 ** currentLevel) / 10 ** currentLevel;
-        cost.quartz = 30 * (15 ** currentLevel) / 10 ** currentLevel;
+        cost.quartz = 75 * (15 ** currentLevel) / 10 ** currentLevel;
         return cost;
     }
 
