@@ -3,13 +3,25 @@ pragma solidity ^0.8.19;
 
 import "./Structs.sol";
 
-contract Dockyard {
+contract Dockyard is Structs {
+    mapping(uint256 => uint256) carrierAvailable;
+
+    mapping(uint256 => uint256) scraperAvailable;
+
+    mapping(uint256 => uint256) celestiaAvailable;
+
+    mapping(uint256 => uint256) sparrowAvailable;
+
+    mapping(uint256 => uint256) frigateAvailable;
+
+    mapping(uint256 => uint256) armadeAvailable;
+
     function getShipsCost(uint256 quantity, uint256 _steel, uint256 _quartz, uint256 _tritium)
         public
         pure
-        returns (Structs.Cost memory)
+        returns (ERC20s memory)
     {
-        Structs.Cost memory cost;
+        ERC20s memory cost;
         cost.steel = _steel * quantity;
         cost.quartz = _quartz * quantity;
         cost.tritium = _tritium * quantity;

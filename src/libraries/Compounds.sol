@@ -3,20 +3,96 @@ pragma solidity ^0.8.19;
 
 import "./Structs.sol";
 
-contract Compounds {
-    function dockyardCost(uint256 currentLevel) public pure returns (Structs.Cost memory) {
-        Structs.Cost memory cost;
+contract Compounds is Structs {
+    mapping(uint256 => uint256) steelMineLevel;
+
+    mapping(uint256 => uint256) quartzMineLevel;
+
+    mapping(uint256 => uint256) tritiumMineLevel;
+
+    mapping(uint256 => uint256) energyPlantLevel;
+
+    mapping(uint256 => uint256) dockyardLevel;
+
+    mapping(uint256 => uint256) labLevel;
+
+    function steelMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+        ERC20s memory cost;
+        cost.steel = 60 * (15 ** currentLevel) / 10 ** currentLevel;
+        cost.quartz = 15 * (15 ** currentLevel) / 10 ** currentLevel;
+        return cost;
+    }
+
+    function quartzMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+        ERC20s memory cost;
+        cost.steel = 48 * (16 ** currentLevel) / 10 ** currentLevel;
+        cost.quartz = 24 * (16 ** currentLevel) / 10 ** currentLevel;
+        return cost;
+    }
+
+    function tritiumMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+        ERC20s memory cost;
+        cost.steel = 225 * (15 ** currentLevel) / 10 ** currentLevel;
+        cost.quartz = 30 * (15 ** currentLevel) / 10 ** currentLevel;
+        return cost;
+    }
+
+    function energyPlantCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+        ERC20s memory cost;
+        cost.steel = 75 * (15 ** currentLevel) / 10 ** currentLevel;
+        cost.quartz = 30 * (15 ** currentLevel) / 10 ** currentLevel;
+        return cost;
+    }
+
+    function dockyardCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+        ERC20s memory cost;
         cost.steel = 400 * 2 ** currentLevel;
         cost.quartz = 200 * 2 ** currentLevel;
         cost.tritium = 100 * 2 ** currentLevel;
         return cost;
     }
 
-    function labCost(uint256 currentLevel) public pure returns (Structs.Cost memory) {
-        Structs.Cost memory cost;
+    function labCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+        ERC20s memory cost;
         cost.steel = 200 * 2 ** currentLevel;
         cost.quartz = 400 * 2 ** currentLevel;
         cost.tritium = 200 * 2 ** currentLevel;
         return cost;
+    }
+
+    function steelProduction(uint256 currentLevel) internal pure returns (uint256) {
+        return (30 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
+    }
+
+    function quartzProduction(uint256 currentLevel) internal pure returns (uint256) {
+        return (20 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
+    }
+
+    function tritiumProduction(uint256 currentLevel) internal pure returns (uint256) {
+        return (10 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
+    }
+
+    function energyPlantProduction(uint256 currentLevel) internal pure returns (uint256) {
+        return (20 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
+    }
+
+    function baseMineConsumption(uint256 currentLevel) internal pure returns (uint256) {
+        return (10 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
+    }
+
+    function tritiumMineConsumption(uint256 currentLevel) internal pure returns (uint256) {
+        return (20 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
+    }
+
+    function productionScaler(uint256 production, uint256 available, uint256 required)
+        internal
+        pure
+        returns (uint256)
+    {
+        if (available > required) {
+            return production;
+        } else {
+            return ((available * 100 / required) * production) / 100;
+        }
     }
 }
