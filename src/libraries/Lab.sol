@@ -3,13 +3,39 @@ pragma solidity ^0.8.19;
 
 import "./Structs.sol";
 
-contract Lab {
+contract Lab is Structs {
+    mapping(uint256 => uint256) energyInnovationLevel;
+
+    mapping(uint256 => uint256) digitalSystemsLevel;
+
+    mapping(uint256 => uint256) beamTechnologyLevel;
+
+    mapping(uint256 => uint256) armourInnovationLevel;
+
+    mapping(uint256 => uint256) ionSystemsLevel;
+
+    mapping(uint256 => uint256) plasmaEngineeringLevel;
+
+    mapping(uint256 => uint256) stellarPhysicsLevel;
+
+    mapping(uint256 => uint256) armsDevelopmentLevel;
+
+    mapping(uint256 => uint256) shieldTechLevel;
+
+    mapping(uint256 => uint256) spacetimeWarpLevel;
+
+    mapping(uint256 => uint256) combustiveDriveLevel;
+
+    mapping(uint256 => uint256) thrustPropulsionLevel;
+
+    mapping(uint256 => uint256) warpDriveLevel;
+
     function getTechCost(uint256 currentLevel, uint256 steel, uint256 quartz, uint256 tritium)
         public
         pure
-        returns (Structs.Cost memory)
+        returns (ERC20s memory)
     {
-        Structs.Cost memory _cost;
+        ERC20s memory _cost;
         _cost.steel = steel * 2 ** currentLevel;
         _cost.quartz = quartz * 2 ** currentLevel;
         _cost.tritium = tritium * 2 ** currentLevel;
@@ -24,7 +50,7 @@ contract Lab {
         require(labLevel >= 1, "Level 1 Lab required");
     }
 
-    function beamTechnologyRequirements(uint256 labLevel, Structs.Techs memory techs) public pure {
+    function beamTechnologyRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 1, "Level 1 Lab required");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation required");
     }
@@ -33,20 +59,20 @@ contract Lab {
         require(labLevel >= 2, "Level 2 Lab required");
     }
 
-    function ionSystemsRequirements(uint256 labLevel, Structs.Techs memory techs) public pure {
+    function ionSystemsRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 4, "Level 4 Lab required");
         require(techs.beamTechnology >= 5, "Level 5 Beam tech Required");
         require(techs.energyInnovation >= 4, "Level 4 Energy Innovation  required");
     }
 
-    function plasmaEngineeringRequirements(uint256 labLevel, Structs.Techs memory techs) public pure {
+    function plasmaEngineeringRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 4, "Level 4 Lab required");
         require(techs.beamTechnology >= 10, "Level 10 Beam Tech required");
         require(techs.energyInnovation >= 8, "Level 8 Energy Innovation  required");
         require(techs.spacetimeWarp >= 5, "Level 5 Spacetime Warp required");
     }
 
-    function stellarPhysicsRequirements(uint256 labLevel, Structs.Techs memory techs) public pure {
+    function stellarPhysicsRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 7, "Level 7 Lab required");
         require(techs.thrustPropulsion >= 3, "Level 10 Thrust Propulsion required");
         require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  required");
@@ -56,28 +82,28 @@ contract Lab {
         require(labLevel >= 4, "Level 4 Lab required");
     }
 
-    function shieldTechRequirements(uint256 labLevel, Structs.Techs memory techs) public pure {
+    function shieldTechRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 6, "Level 6 Lab required");
         require(techs.energyInnovation >= 6, "Level 6 Energy Innovation  required");
     }
 
-    function spacetimeWarpRequirements(uint256 labLevel, Structs.Techs memory techs) public pure {
+    function spacetimeWarpRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 7, "Level 7 Lab required");
         require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  required");
         require(techs.shieldTech >= 5, "Level 5 Shield Tech required");
     }
 
-    function combustiveEngineRequirements(uint256 labLevel, Structs.Techs memory techs) public pure {
+    function combustiveEngineRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 1, "Level 1 Lab required");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  required");
     }
 
-    function thrustPropulsionRequirements(uint256 labLevel, Structs.Techs memory techs) public pure {
+    function thrustPropulsionRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 2, "Level 2 Lab required");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  required");
     }
 
-    function warpDriveRequirements(uint256 labLevel, Structs.Techs memory techs) public pure {
+    function warpDriveRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 7, "Level 7 Lab required");
         require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  required");
         require(techs.spacetimeWarp >= 3, "Level 3 Spacetime Warp required");
