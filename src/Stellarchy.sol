@@ -98,6 +98,54 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         resourcesTimer[planetId] = time.now;
     }
 
+    function steelMineUpgrade() external {
+        collectResources();
+        uint planetId = _getTokenOwner(msg.sender);
+        ERC20s memory cost = steelMineCost(steelMineLevel[planetId]);
+        _payResourcesERC20(msg.sender, cost);
+        steelMineLevel[planetId] += 1;
+    }
+
+    function quartzMineUpgrade() external {
+        collectResources();
+        uint planetId = _getTokenOwner(msg.sender);
+        ERC20s memory cost = quartzMineCost(quartzMineLevel[planetId]);
+        _payResourcesERC20(msg.sender, cost);
+        quartzMineLevel[planetId] += 1;
+    }
+
+    function tritiumMineUpgrade() external {
+        collectResources();
+        uint planetId = _getTokenOwner(msg.sender);
+        ERC20s memory cost = tritiumMineCost(tritiumMineLevel[planetId]);
+        _payResourcesERC20(msg.sender, cost);
+        tritiumMineLevel[planetId] += 1;
+    }
+
+    function energyPlantUpgrade() external {
+        collectResources();
+        uint planetId = _getTokenOwner(msg.sender);
+        ERC20s memory cost = energyPlantMineCost(energyPlantLevel[planetId]);
+        _payResourcesERC20(msg.sender, cost);
+        energyPlantLevel[planetId] += 1;
+    }
+
+    function dockyardUpgrade() external {
+        collectResources();
+        uint planetId = _getTokenOwner(msg.sender);
+        ERC20s memory cost = dockyardCost(dockyardLevel[planetId]);
+        _payResourcesERC20(msg.sender, cost);
+        dockyardLevel[planetId] += 1;
+    }
+
+    function labUpgrade() external {
+        collectResources();
+        uint planetId = _getTokenOwner(msg.sender);
+        ERC20s memory cost = labCost(labLevel[planetId]);
+        _payResourcesERC20(msg.sender, cost);
+        labLevel[planetId] += 1;
+    }
+
     // Internal Functions
     function _initializer(address erc721, address steel, address quartz, address tritium, address _owner)
         internal
@@ -162,13 +210,17 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function _payResourcesERC20(address caller, ERC20s memory amounts) internal {
         Interfaces memory interfaces = _getInterfaces();
         if (amounts.steel > 0) {
+            require(interfaces.steel.balanceOf(caller) >= amounts.steel2, "NOT_ENOUGH_STEEL");
             interfaces.steel.burn(caller, amounts.steel);
         }
         if (amounts.quartz > 0) {
+            require(interfaces.quartz.balanceOf(caller) >= amounts.quartz, "NOT_ENOUGH_QUARTZ");
             interfaces.quartz.burn(caller, amounts.quartz);
         }
         if (amounts.tritium > 0) {
+            require(interfaces.tritium.balanceOf(caller) >= amounts.tritium, "NOT_ENOUGH_TRITIUM");
             interfaces.tritium.burn(caller, amounts.tritium);
         }
     }
+
 }
