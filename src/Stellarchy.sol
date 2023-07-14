@@ -91,6 +91,13 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         _mintInitialLiquidity(msg.sender);
     }
 
+    function collectResources() public {
+        uint256 planetId = _getTokenOwner(msg.sender);
+        ERC20s memory amounts = getCollectibleResources(planetId);
+        _payResourcesERC20(msg.sender, amounts);
+        resourcesTimer[planetId] = time.now;
+    }
+
     // Internal Functions
     function _initializer(address erc721, address steel, address quartz, address tritium, address _owner)
         internal
@@ -137,5 +144,31 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         interfaces.steel.mint(caller, 500);
         interfaces.quartz.mint(caller, 300);
         interfaces.tritium.mint(caller, 100);
+    }
+
+    function _recieveResourcesERC20(address caller, ERC20s memory amounts) internal {
+        Interfaces memory interfaces = _getInterfaces();
+        if (amounts.steel > 0) {
+            interfaces.steel.mint(caller, amounts.steel);
+        }
+        if (amounts.quartz > 0) {
+            interfaces.quartz.mint(caller, amounts.quartz);
+        }
+        if (amounts.tritium > 0) {
+            interfaces.tritium.mint(caller, amounts.tritium);
+        }
+    }
+
+    function _payResourcesERC20(address caller, ERC20s memory amounts) internal {
+        Interfaces memory interfaces = _getInterfaces();
+        if (amounts.steel > 0) {
+            interfaces.steel.burn(caller, amounts.steel);
+        }
+        if (amounts.quartz > 0) {
+            interfaces.quartz.burn(caller, amounts.quartz);
+        }
+        if (amounts.tritium > 0) {
+            interfaces.tritium.burn(caller, amounts.tritium);
+        }
     }
 }
