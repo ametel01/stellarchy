@@ -22,7 +22,7 @@ contract Structs {
         uint256 armsDevelopment;
         uint256 shieldTech;
         uint256 spacetimeWarp;
-        uint256 combustiveEngine;
+        uint256 combustiveDrive;
         uint256 thrustPropulsion;
         uint256 warpDrive;
     }

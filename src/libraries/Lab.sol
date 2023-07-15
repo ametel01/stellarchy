@@ -93,7 +93,7 @@ contract Lab is Structs {
         require(techs.shieldTech >= 5, "Level 5 Shield Tech required");
     }
 
-    function combustiveEngineRequirements(uint256 labLevel, Techs memory techs) public pure {
+    function combustiveDriveRequirements(uint256 labLevel, Techs memory techs) public pure {
         require(labLevel >= 1, "Level 1 Lab required");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  required");
     }

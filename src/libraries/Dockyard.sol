@@ -30,18 +30,18 @@ contract Dockyard is Structs {
 
     function carrierRequirements(uint256 dockyardLevel, Structs.Techs memory techs) public pure {
         require(dockyardLevel >= 2, "Level 2 Dockyard is required");
-        require(techs.combustiveEngine >= 2, "Level 2 Combustive Engine required");
+        require(techs.combustiveDrive >= 2, "Level 2 Combustive Engine required");
     }
 
     function scraperRequirements(uint256 dockyardLevel, Structs.Techs memory techs) public pure {
         require(dockyardLevel >= 4, "Level 4 Dockyard is required");
-        require(techs.combustiveEngine >= 6, "Level 6 Combustive Engine required");
+        require(techs.combustiveDrive >= 6, "Level 6 Combustive Engine required");
         require(techs.shieldTech >= 2, "Level 2 Shield Tech required");
     }
 
     function celestiaRequirements(uint256 dockyardLevel, Structs.Techs memory techs) public pure {
         require(dockyardLevel >= 1, "Level 1 Dockyard is required");
-        require(techs.combustiveEngine >= 1, "Level 1 Combustive Engine required");
+        require(techs.combustiveDrive >= 1, "Level 1 Combustive Engine required");
     }
 
     function sparrowRequirements(uint256 dockyardLevel) public pure {
