@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.19.0;
 
-import "./Structs.sol";
+import {Structs} from "./Structs.sol";
 
 contract Compounds is Structs {
-    mapping(uint256 => uint256) steelMineLevel;
+    mapping(uint256 => uint256) public steelMineLevel;
 
-    mapping(uint256 => uint256) quartzMineLevel;
+    mapping(uint256 => uint256) public quartzMineLevel;
 
-    mapping(uint256 => uint256) tritiumMineLevel;
+    mapping(uint256 => uint256) public tritiumMineLevel;
 
-    mapping(uint256 => uint256) energyPlantLevel;
+    mapping(uint256 => uint256) public energyPlantLevel;
 
-    mapping(uint256 => uint256) dockyardLevel;
+    mapping(uint256 => uint256) public dockyardLevel;
 
-    mapping(uint256 => uint256) labLevel;
+    mapping(uint256 => uint256) public labLevel;
 
     function steelMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
         ERC20s memory cost;

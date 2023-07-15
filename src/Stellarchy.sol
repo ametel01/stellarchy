@@ -1,37 +1,38 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.19.0;
 
-import "./libraries/Structs.sol";
-import "./libraries/Compounds.sol";
-import "./libraries/Lab.sol";
-import "./libraries/Dockyard.sol";
-import "./libraries/Defences.sol";
-import "./tokens/STERC20.sol";
+import {Structs} from "./libraries/Structs.sol";
+import {Compounds} from "./libraries/Compounds.sol";
+import {Lab} from "./libraries/";
+import {Dockyard} from "./libraries/Dockyard.sol";
+import {Defences} from "./libraries/Defences.sol";
+import {ISTERC20} from "./tokens/STERC20.sol";
+import {ISTERC721} from "./tokens/STERC721.sol";
 
 contract Stellarchy is Compounds, Lab, Dockyard, Defences {
-    uint256 public constant _price = 0.01 ether;
+    uint256 public constant PRICE = 0.01 ether;
 
     address payable public owner;
 
-    uint256 numberOfPlanets;
+    uint256 private numberOfPlanets;
 
-    mapping(uint256 => uint256) resourcesSpent;
+    mapping(uint256 => uint256) private resourcesSpent;
 
-    address erc721Address;
+    address private erc721Address;
 
-    address steelAddress;
+    address private steelAddress;
 
-    address quartzAddress;
+    address private quartzAddress;
 
-    address tritiumAddress;
+    address private tritiumAddress;
 
-    mapping(uint256 => uint256) resourcesTimer;
+    mapping(uint256 => uint256) private resourcesTimer;
 
     constructor(address erc721, address steel, address quartz, address tritium) {
         _initializer(erc721, steel, quartz, tritium);
     }
 
-    receive() external payable {}
+    // receive() external payable {}
 
     // View Functions
     function getTokenAddresses() external view returns (Tokens memory tokens) {
@@ -96,7 +97,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function generatePlanet() external payable {
         ISTERC721 erc721 = ISTERC721(erc721Address);
         require(erc721.balanceOf(msg.sender) == 0, "MAX_PLANET_PER_ADDRESS");
-        require(msg.value >= _price, "NOT_ENOUGH_ETHER");
+        require(msg.value >= PRICE, "NOT_ENOUGH_ETHER");
         erc721.mint(msg.sender, numberOfPlanets + 1);
         numberOfPlanets += 1;
         _mintInitialLiquidity(msg.sender);

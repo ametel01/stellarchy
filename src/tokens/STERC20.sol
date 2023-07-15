@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.19.0;
 
-import "openzeppelin/access/Ownable.sol";
-import "openzeppelin/token/ERC20/ERC20.sol";
+import {Ownable} from "openzeppelin/access/Ownable.sol";
+import {ERC20} from "openzeppelin/token/ERC20/ERC20.sol";
 
 interface ISTERC20 is IERC20 {
     function mint(address caller, uint256 amount) external;
@@ -10,7 +10,7 @@ interface ISTERC20 is IERC20 {
 }
 
 contract STERC20 is ERC20, Ownable {
-    address minter;
+    address private minter;
 
     constructor(string memory _name, string memory _symbol) ERC20(_name, _symbol) {}
 

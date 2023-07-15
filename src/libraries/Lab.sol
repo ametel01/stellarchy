@@ -1,34 +1,34 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.19.0;
 
-import "./Structs.sol";
+import {Structs} from "./Structs.sol";
 
 contract Lab is Structs {
-    mapping(uint256 => uint256) energyInnovationLevel;
+    mapping(uint256 => uint256) public energyInnovationLevel;
 
-    mapping(uint256 => uint256) digitalSystemsLevel;
+    mapping(uint256 => uint256) public digitalSystemsLevel;
 
-    mapping(uint256 => uint256) beamTechnologyLevel;
+    mapping(uint256 => uint256) public beamTechnologyLevel;
 
-    mapping(uint256 => uint256) armourInnovationLevel;
+    mapping(uint256 => uint256) public armourInnovationLevel;
 
-    mapping(uint256 => uint256) ionSystemsLevel;
+    mapping(uint256 => uint256) public ionSystemsLevel;
 
-    mapping(uint256 => uint256) plasmaEngineeringLevel;
+    mapping(uint256 => uint256) public plasmaEngineeringLevel;
 
-    mapping(uint256 => uint256) stellarPhysicsLevel;
+    mapping(uint256 => uint256) public stellarPhysicsLevel;
 
-    mapping(uint256 => uint256) armsDevelopmentLevel;
+    mapping(uint256 => uint256) public armsDevelopmentLevel;
 
-    mapping(uint256 => uint256) shieldTechLevel;
+    mapping(uint256 => uint256) public shieldTechLevel;
 
-    mapping(uint256 => uint256) spacetimeWarpLevel;
+    mapping(uint256 => uint256) public spacetimeWarpLevel;
 
-    mapping(uint256 => uint256) combustiveDriveLevel;
+    mapping(uint256 => uint256) public combustiveDriveLevel;
 
-    mapping(uint256 => uint256) thrustPropulsionLevel;
+    mapping(uint256 => uint256) public thrustPropulsionLevel;
 
-    mapping(uint256 => uint256) warpDriveLevel;
+    mapping(uint256 => uint256) public warpDriveLevel;
 
     function getTechCost(uint256 currentLevel, uint256 steel, uint256 quartz, uint256 tritium)
         public
@@ -43,69 +43,69 @@ contract Lab is Structs {
     }
 
     function energyInnovationRequirements(uint256 labLevel) public pure {
-        require(labLevel >= 1, "Level 1 Lab required");
+        require(labLevel >= 1, "Level 1 Lab req");
     }
 
     function digitalSystemsRequirements(uint256 labLevel) public pure {
-        require(labLevel >= 1, "Level 1 Lab required");
+        require(labLevel >= 1, "Level 1 Lab req");
     }
 
     function beamTechnologyRequirements(uint256 labLevel, Techs memory techs) public pure {
-        require(labLevel >= 1, "Level 1 Lab required");
-        require(techs.energyInnovation >= 1, "Level 1 Energy Innovation required");
+        require(labLevel >= 1, "Level 1 Lab req");
+        require(techs.energyInnovation >= 1, "Level 1 Energy Innovation req");
     }
 
     function armourRequirements(uint256 labLevel) public pure {
-        require(labLevel >= 2, "Level 2 Lab required");
+        require(labLevel >= 2, "Level 2 Lab req");
     }
 
     function ionSystemsRequirements(uint256 labLevel, Techs memory techs) public pure {
-        require(labLevel >= 4, "Level 4 Lab required");
+        require(labLevel >= 4, "Level 4 Lab req");
         require(techs.beamTechnology >= 5, "Level 5 Beam tech Required");
-        require(techs.energyInnovation >= 4, "Level 4 Energy Innovation  required");
+        require(techs.energyInnovation >= 4, "Level 4 Energy Innovation  req");
     }
 
     function plasmaEngineeringRequirements(uint256 labLevel, Techs memory techs) public pure {
-        require(labLevel >= 4, "Level 4 Lab required");
-        require(techs.beamTechnology >= 10, "Level 10 Beam Tech required");
-        require(techs.energyInnovation >= 8, "Level 8 Energy Innovation  required");
-        require(techs.spacetimeWarp >= 5, "Level 5 Spacetime Warp required");
+        require(labLevel >= 4, "Level 4 Lab req");
+        require(techs.beamTechnology >= 10, "Level 10 Beam Tech req");
+        require(techs.energyInnovation >= 8, "Level 8 Energy Innovation  req");
+        require(techs.spacetimeWarp >= 5, "Level 5 Spacetime Warp req");
     }
 
     function stellarPhysicsRequirements(uint256 labLevel, Techs memory techs) public pure {
-        require(labLevel >= 7, "Level 7 Lab required");
-        require(techs.thrustPropulsion >= 3, "Level 10 Thrust Propulsion required");
-        require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  required");
+        require(labLevel >= 7, "Level 7 Lab req");
+        require(techs.thrustPropulsion >= 3, "Level 10 Thrust Propulsion req");
+        require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  req");
     }
 
     function armsDevelopmentRequirements(uint256 labLevel) public pure {
-        require(labLevel >= 4, "Level 4 Lab required");
+        require(labLevel >= 4, "Level 4 Lab req");
     }
 
     function shieldTechRequirements(uint256 labLevel, Techs memory techs) public pure {
-        require(labLevel >= 6, "Level 6 Lab required");
-        require(techs.energyInnovation >= 6, "Level 6 Energy Innovation  required");
+        require(labLevel >= 6, "Level 6 Lab req");
+        require(techs.energyInnovation >= 6, "Level 6 Energy Innovation  req");
     }
 
     function spacetimeWarpRequirements(uint256 labLevel, Techs memory techs) public pure {
-        require(labLevel >= 7, "Level 7 Lab required");
-        require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  required");
-        require(techs.shieldTech >= 5, "Level 5 Shield Tech required");
+        require(labLevel >= 7, "Level 7 Lab req");
+        require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  req");
+        require(techs.shieldTech >= 5, "Level 5 Shield Tech req");
     }
 
     function combustiveDriveRequirements(uint256 labLevel, Techs memory techs) public pure {
-        require(labLevel >= 1, "Level 1 Lab required");
-        require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  required");
+        require(labLevel >= 1, "Level 1 Lab req");
+        require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  req");
     }
 
     function thrustPropulsionRequirements(uint256 labLevel, Techs memory techs) public pure {
-        require(labLevel >= 2, "Level 2 Lab required");
-        require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  required");
+        require(labLevel >= 2, "Level 2 Lab req");
+        require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  req");
     }
 
     function warpDriveRequirements(uint256 labLevel, Techs memory techs) public pure {
-        require(labLevel >= 7, "Level 7 Lab required");
-        require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  required");
-        require(techs.spacetimeWarp >= 3, "Level 3 Spacetime Warp required");
+        require(labLevel >= 7, "Level 7 Lab req");
+        require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  req");
+        require(techs.spacetimeWarp >= 3, "Level 3 Spacetime Warp req");
     }
 }
