@@ -80,9 +80,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function getCollectibleResources(uint256 planetId) public view returns (ERC20s memory resources) {
         ERC20s memory _resources;
         uint256 timeElapsed = _timeSinceLastCollection(planetId);
-        _resources.steel = steelProduction(steelMineLevel[planetId]) * timeElapsed / 3600;
-        _resources.quartz = quartzProduction(quartzMineLevel[planetId]) * timeElapsed / 3600;
-        _resources.tritium = tritiumProduction(tritiumMineLevel[planetId]) * timeElapsed / 3600;
+        _resources.steel = _steelProduction(steelMineLevel[planetId]) * timeElapsed / 3600;
+        _resources.quartz = _quartzProduction(quartzMineLevel[planetId]) * timeElapsed / 3600;
+        _resources.tritium = _tritiumProduction(tritiumMineLevel[planetId]) * timeElapsed / 3600;
         return _resources;
     }
 

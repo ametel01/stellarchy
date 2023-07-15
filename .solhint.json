@@ -4,7 +4,8 @@
         "constructor-syntax": "warn",
         "func-visibility": ["warn", { "ignoreConstructors": true }],
         "not-rely-on-time": "off",
-        "no-empty-blocks": "off"
+        "no-empty-blocks": "off",
+        "private-vars-leading-underscore": "warn"
     },
     "plugins": ["prettier"]
 }

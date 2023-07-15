@@ -11,16 +11,16 @@ interface ISTERC20 is IERC20 {
 }
 
 contract STERC20 is ERC20, Ownable {
-    address private minter;
+    address private _minter;
 
     constructor(string memory _name, string memory _symbol) ERC20(_name, _symbol) {}
 
-    function setMinter(address _minter) external virtual onlyOwner {
-        minter = _minter;
+    function setMinter(address minter) external virtual onlyOwner {
+        _minter = minter;
     }
 
     function mint(address caller, uint256 amount) external virtual {
-        require(msg.sender == minter, "caller is not minter");
+        require(msg.sender == _minter, "caller is not minter");
         _mint(caller, amount);
     }
 

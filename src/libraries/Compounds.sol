@@ -16,35 +16,35 @@ contract Compounds is Structs {
 
     mapping(uint256 => uint256) public labLevel;
 
-    function steelMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+    function _steelMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
         ERC20s memory cost;
         cost.steel = 60 * (15 ** currentLevel) / 10 ** currentLevel;
         cost.quartz = 15 * (15 ** currentLevel) / 10 ** currentLevel;
         return cost;
     }
 
-    function quartzMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+    function _quartzMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
         ERC20s memory cost;
         cost.steel = 48 * (16 ** currentLevel) / 10 ** currentLevel;
         cost.quartz = 24 * (16 ** currentLevel) / 10 ** currentLevel;
         return cost;
     }
 
-    function tritiumMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+    function _tritiumMineCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
         ERC20s memory cost;
         cost.steel = 225 * (15 ** currentLevel) / 10 ** currentLevel;
         cost.quartz = 75 * (15 ** currentLevel) / 10 ** currentLevel;
         return cost;
     }
 
-    function energyPlantCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+    function _energyPlantCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
         ERC20s memory cost;
         cost.steel = 75 * (15 ** currentLevel) / 10 ** currentLevel;
         cost.quartz = 30 * (15 ** currentLevel) / 10 ** currentLevel;
         return cost;
     }
 
-    function dockyardCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+    function _dockyardCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
         ERC20s memory cost;
         cost.steel = 400 * 2 ** currentLevel;
         cost.quartz = 200 * 2 ** currentLevel;
@@ -52,7 +52,7 @@ contract Compounds is Structs {
         return cost;
     }
 
-    function labCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
+    function _labCost(uint256 currentLevel) internal pure returns (ERC20s memory) {
         ERC20s memory cost;
         cost.steel = 200 * 2 ** currentLevel;
         cost.quartz = 400 * 2 ** currentLevel;
@@ -60,31 +60,31 @@ contract Compounds is Structs {
         return cost;
     }
 
-    function steelProduction(uint256 currentLevel) internal pure returns (uint256) {
+    function _steelProduction(uint256 currentLevel) internal pure returns (uint256) {
         return (30 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
     }
 
-    function quartzProduction(uint256 currentLevel) internal pure returns (uint256) {
+    function _quartzProduction(uint256 currentLevel) internal pure returns (uint256) {
         return (20 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
     }
 
-    function tritiumProduction(uint256 currentLevel) internal pure returns (uint256) {
+    function _tritiumProduction(uint256 currentLevel) internal pure returns (uint256) {
         return (10 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
     }
 
-    function energyPlantProduction(uint256 currentLevel) internal pure returns (uint256) {
+    function _energyPlantProduction(uint256 currentLevel) internal pure returns (uint256) {
         return (20 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
     }
 
-    function baseMineConsumption(uint256 currentLevel) internal pure returns (uint256) {
+    function _baseMineConsumption(uint256 currentLevel) internal pure returns (uint256) {
         return (10 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
     }
 
-    function tritiumMineConsumption(uint256 currentLevel) internal pure returns (uint256) {
+    function _tritiumMineConsumption(uint256 currentLevel) internal pure returns (uint256) {
         return (20 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
     }
 
-    function productionScaler(uint256 production, uint256 available, uint256 required)
+    function _productionScaler(uint256 production, uint256 available, uint256 required)
         internal
         pure
         returns (uint256)

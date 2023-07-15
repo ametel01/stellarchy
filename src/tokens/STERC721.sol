@@ -12,22 +12,22 @@ interface ISTERC721 is IERC721 {
 
 
 contract STERC721 is ERC721("Stellarchy Planet", "STPL"), Ownable {
-    address private minter;
+    address private _minter;
 
-    mapping(address => uint256) private tokens;
+    mapping(address => uint256) private _tokens;
 
     function tokenOf(address account) external view returns (uint256 tokenId) {
-        return tokens[account];
+        return _tokens[account];
     }
 
-    function setMinter(address _minter) external virtual onlyOwner {
-        minter = _minter;
+    function setMinter(address minter) external virtual onlyOwner {
+        _minter = minter;
     }
 
     function mint(address to, uint256 tokenId) external virtual {
-        require(msg.sender == minter, "caller is not minter");
+        require(msg.sender == _minter, "caller is not minter");
         require(balanceOf(to) == 0, "max planets per address is 1");
-        tokens[to] = tokenId;
+        _tokens[to] = tokenId;
         _safeMint(to, tokenId);
     }
 }
