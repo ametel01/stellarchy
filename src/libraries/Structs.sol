@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19.0;
+pragma solidity ^0.8.19 .0;
 
 import {ISTERC20} from "../tokens/STERC20.sol";
 import {ISTERC721} from "../tokens/STERC721.sol";
-
 
 contract Structs {
     struct ERC20s {

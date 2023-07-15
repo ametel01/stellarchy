@@ -5,7 +5,10 @@
         "func-visibility": ["warn", { "ignoreConstructors": true }],
         "not-rely-on-time": "off",
         "no-empty-blocks": "off",
-        "private-vars-leading-underscore": "warn"
+        "private-vars-leading-underscore": "warn",
+        "ordering": "warn",
+        "constructor-syntax": "warn",
+        "max-line-length": ["warn", 80]
     },
     "plugins": ["prettier"]
 }
