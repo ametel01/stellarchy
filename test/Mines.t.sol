@@ -1,151 +1,158 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-// import "forge-std/console.sol";
-// import "forge-std/Test.sol";
-// import "../src/libraries/Mines.sol";
+import "forge-std/console.sol";
+import "forge-std/Test.sol";
 
-// contract CounterTest is Test {
-//     Mines public mines;
+import "./Utils.t.sol";
+import "../src/libraries/Compounds.sol";
+import "../src/libraries/Structs.sol";
 
-//     function setUp() public {
-//         mines = new Mines();
-//     }
+contract CompoundsTests is Test, TestSetup, Compounds {
+    function testCompoundsUpgrade() public {
+        address p1 = vm.addr(0x1);
+        deal(p1, 1 ether);
+        vm.prank(p1);
+        game.generatePlanet{value: 0.01 ether}();
 
-//     function testSteelMineCost() public {
-//         (uint256 s0, uint256 q0) = mines.steelMineCost(0);
-//         assertEq(s0, 60);
-//         assertEq(q0, 15);
-//         (uint256 s1, uint256 q1) = mines.steelMineCost(1);
-//         assertEq(s1, 90);
-//         assertEq(q1, 22);
-//         (uint256 s2, uint256 q2) = mines.steelMineCost(5);
-//         assertEq(s2, 455);
-//         assertEq(q2, 113);
-//         (uint256 s4, uint256 q4) = mines.steelMineCost(30);
-//         assertEq(s4, 11505063);
-//         assertEq(q4, 2876265);
-//     }
+        vm.startPrank(p1);
+        game.energyPlantUpgrade();
+        game.steelMineUpgrade();
+        game.quartzMineUpgrade();
+        game.tritiumMineUpgrade();
+        console.logInt(game.getEnergyAvailable(1));
+        vm.warp(ONE_DAY * 10);
+        game.energyPlantUpgrade();
+        game.energyPlantUpgrade();
+        game.steelMineUpgrade();
+        game.quartzMineUpgrade();
+        game.tritiumMineUpgrade();
+        game.dockyardUpgrade();
+        game.labUpgrade();
+        ERC20s memory resources = game.getSpendableResources(1);
+        assertEq(resources.steel, 7299);
+        assertEq(resources.quartz, 4790);
+        assertEq(resources.tritium, 2439);
+    }
 
-//     function testQuartzMineCost() public {
-//         (uint256 s0, uint256 q0) = mines.quartzMineCost(0);
-//         assertEq(s0, 48);
-//         assertEq(q0, 24);
-//         (uint256 s1, uint256 q1) = mines.quartzMineCost(1);
-//         assertEq(s1, 76);
-//         assertEq(q1, 38);
-//         (uint256 s2, uint256 q2) = mines.quartzMineCost(5);
-//         assertEq(s2, 503);
-//         assertEq(q2, 251);
-//         (uint256 s4, uint256 q4) = mines.quartzMineCost(30);
-//         assertEq(s4, 63802943);
-//         assertEq(q4, 31901471);
-//     }
+    function testSteelMineCost() public {
+        assertEq(steelMineCost(0).steel, 60);
+        assertEq(steelMineCost(0).quartz, 15);
+        assertEq(steelMineCost(1).steel, 90);
+        assertEq(steelMineCost(1).quartz, 22);
+        assertEq(steelMineCost(5).steel, 455);
+        assertEq(steelMineCost(5).quartz, 113);
+        assertEq(steelMineCost(30).steel, 11505063);
+        assertEq(steelMineCost(30).quartz, 2876265);
+    }
 
-//     function testTritiumMineCost() public {
-//         (uint256 s0, uint256 q0) = mines.tritiumMineCost(0);
-//         assertEq(s0, 225);
-//         assertEq(q0, 75);
-//         (uint256 s1, uint256 q1) = mines.tritiumMineCost(1);
-//         assertEq(s1, 337);
-//         assertEq(q1, 112);
-//         (uint256 s2, uint256 q2) = mines.tritiumMineCost(5);
-//         assertEq(s2, 1708);
-//         assertEq(q2, 569);
-//         (uint256 s4, uint256 q4) = mines.tritiumMineCost(30);
-//         assertEq(s4, 43143988);
-//         assertEq(q4, 14381329);
-//     }
+    function testQuartzMineCost() public {
+        assertEq(quartzMineCost(0).steel, 48);
+        assertEq(quartzMineCost(0).quartz, 24);
+        assertEq(quartzMineCost(1).steel, 76);
+        assertEq(quartzMineCost(1).quartz, 38);
+        assertEq(quartzMineCost(5).steel, 503);
+        assertEq(quartzMineCost(5).quartz, 251);
+        assertEq(quartzMineCost(30).steel, 63802943);
+        assertEq(quartzMineCost(30).quartz, 31901471);
+    }
 
-//     function testEnergyPlantMineCost() public {
-//         (uint256 s0, uint256 q0) = mines.energyPlantCost(0);
-//         assertEq(s0, 75);
-//         assertEq(q0, 30);
-//         (uint256 s1, uint256 q1) = mines.energyPlantCost(1);
-//         assertEq(s1, 112);
-//         assertEq(q1, 45);
-//         (uint256 s2, uint256 q2) = mines.energyPlantCost(5);
-//         assertEq(s2, 569);
-//         assertEq(q2, 227);
-//         (uint256 s4, uint256 q4) = mines.energyPlantCost(30);
-//         assertEq(s4, 14381329);
-//         assertEq(q4, 5752531);
-//     }
+    function testTritiumMineCost() public {
+        assertEq(tritiumMineCost(0).steel, 225);
+        assertEq(tritiumMineCost(0).quartz, 75);
+        assertEq(tritiumMineCost(1).steel, 337);
+        assertEq(tritiumMineCost(1).quartz, 112);
+        assertEq(tritiumMineCost(5).steel, 1708);
+        assertEq(tritiumMineCost(5).quartz, 569);
+        assertEq(tritiumMineCost(30).steel, 43143988);
+        assertEq(tritiumMineCost(30).quartz, 14381329);
+    }
 
-//     function testSteelProduction() public {
-//         uint256 s0 = mines.steelProduction(0);
-//         assertEq(s0, 0);
-//         uint256 s1 = mines.steelProduction(1);
-//         assertEq(s1, 33);
-//         uint256 s2 = mines.steelProduction(5);
-//         assertEq(s2, 241);
-//         uint256 s3 = mines.steelProduction(30);
-//         assertEq(s3, 15704);
-//     }
+    function testEnergyPlantMineCost() public {
+        assertEq(energyPlantCost(0).steel, 75);
+        assertEq(energyPlantCost(0).quartz, 30);
+        assertEq(energyPlantCost(1).steel, 112);
+        assertEq(energyPlantCost(1).quartz, 45);
+        assertEq(energyPlantCost(5).steel, 569);
+        assertEq(energyPlantCost(5).quartz, 227);
+        assertEq(energyPlantCost(30).steel, 14381329);
+        assertEq(energyPlantCost(30).quartz, 5752531);
+    }
 
-//     function testQuartzProduction() public {
-//         uint256 s0 = mines.quartzProduction(0);
-//         assertEq(s0, 0);
-//         uint256 s1 = mines.quartzProduction(1);
-//         assertEq(s1, 22);
-//         uint256 s2 = mines.quartzProduction(5);
-//         assertEq(s2, 161);
-//         uint256 s3 = mines.quartzProduction(30);
-//         assertEq(s3, 10469);
-//     }
+    function testSteelProduction() public {
+        uint256 s0 = steelProduction(0);
+        assertEq(s0, 0);
+        uint256 s1 = steelProduction(1);
+        assertEq(s1, 33);
+        uint256 s2 = steelProduction(5);
+        assertEq(s2, 241);
+        uint256 s3 = steelProduction(30);
+        assertEq(s3, 15704);
+    }
 
-//     function testTritiumProduction() public {
-//         uint256 s0 = mines.tritiumProduction(0);
-//         assertEq(s0, 0);
-//         uint256 s1 = mines.tritiumProduction(1);
-//         assertEq(s1, 11);
-//         uint256 s2 = mines.tritiumProduction(5);
-//         assertEq(s2, 80);
-//         uint256 s3 = mines.tritiumProduction(30);
-//         assertEq(s3, 5234);
-//     }
+    function testQuartzProduction() public {
+        uint256 s0 = quartzProduction(0);
+        assertEq(s0, 0);
+        uint256 s1 = quartzProduction(1);
+        assertEq(s1, 22);
+        uint256 s2 = quartzProduction(5);
+        assertEq(s2, 161);
+        uint256 s3 = quartzProduction(30);
+        assertEq(s3, 10469);
+    }
 
-//     function testEnergyPlantProduction() public {
-//         uint256 s0 = mines.energyPlantProduction(0);
-//         assertEq(s0, 0);
-//         uint256 s1 = mines.energyPlantProduction(1);
-//         assertEq(s1, 22);
-//         uint256 s2 = mines.energyPlantProduction(5);
-//         assertEq(s2, 161);
-//         uint256 s3 = mines.energyPlantProduction(30);
-//         assertEq(s3, 10469);
-//     }
+    function testTritiumProduction() public {
+        uint256 s0 = tritiumProduction(0);
+        assertEq(s0, 0);
+        uint256 s1 = tritiumProduction(1);
+        assertEq(s1, 11);
+        uint256 s2 = tritiumProduction(5);
+        assertEq(s2, 80);
+        uint256 s3 = tritiumProduction(30);
+        assertEq(s3, 5234);
+    }
 
-//     function testBeseConsumption() public {
-//         uint256 s0 = mines.baseMineConsumption(0);
-//         assertEq(s0, 0);
-//         uint256 s1 = mines.baseMineConsumption(1);
-//         assertEq(s1, 11);
-//         uint256 s2 = mines.baseMineConsumption(5);
-//         assertEq(s2, 80);
-//         uint256 s3 = mines.baseMineConsumption(30);
-//         assertEq(s3, 5234);
-//     }
+    function testEnergyPlantProduction() public {
+        uint256 s0 = energyPlantProduction(0);
+        assertEq(s0, 0);
+        uint256 s1 = energyPlantProduction(1);
+        assertEq(s1, 22);
+        uint256 s2 = energyPlantProduction(5);
+        assertEq(s2, 161);
+        uint256 s3 = energyPlantProduction(30);
+        assertEq(s3, 10469);
+    }
 
-//     function testTritiumConsumption() public {
-//         uint256 s0 = mines.tritiumMineConsumption(0);
-//         assertEq(s0, 0);
-//         uint256 s1 = mines.tritiumMineConsumption(1);
-//         assertEq(s1, 22);
-//         uint256 s2 = mines.tritiumMineConsumption(5);
-//         assertEq(s2, 161);
-//         uint256 s3 = mines.tritiumMineConsumption(30);
-//         assertEq(s3, 10469);
-//     }
+    function testBeseConsumption() public {
+        uint256 s0 = baseMineConsumption(0);
+        assertEq(s0, 0);
+        uint256 s1 = baseMineConsumption(1);
+        assertEq(s1, 11);
+        uint256 s2 = baseMineConsumption(5);
+        assertEq(s2, 80);
+        uint256 s3 = baseMineConsumption(30);
+        assertEq(s3, 5234);
+    }
 
-//     function testProductionScaler() public {
-//         uint256 s0 = mines.productionScaler(22, 100, 50);
-//         assertEq(s0, 22);
-//         uint256 s1 = mines.productionScaler(22, 80, 100);
-//         assertEq(s1, 17);
-//         uint256 s2 = mines.productionScaler(22, 60, 100);
-//         assertEq(s2, 13);
-//         uint256 s3 = mines.productionScaler(22, 20, 100);
-//         assertEq(s3, 4);
-//     }
-// }
+    function testTritiumConsumption() public {
+        uint256 s0 = tritiumMineConsumption(0);
+        assertEq(s0, 0);
+        uint256 s1 = tritiumMineConsumption(1);
+        assertEq(s1, 22);
+        uint256 s2 = tritiumMineConsumption(5);
+        assertEq(s2, 161);
+        uint256 s3 = tritiumMineConsumption(30);
+        assertEq(s3, 10469);
+    }
+
+    function testProductionScaler() public {
+        uint256 s0 = productionScaler(22, 100, 50);
+        assertEq(s0, 22);
+        uint256 s1 = productionScaler(22, 80, 100);
+        assertEq(s1, 17);
+        uint256 s2 = productionScaler(22, 60, 100);
+        assertEq(s2, 13);
+        uint256 s3 = productionScaler(22, 20, 100);
+        assertEq(s3, 4);
+    }
+}

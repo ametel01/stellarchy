@@ -8,13 +8,12 @@ import "../src/libraries/Structs.sol";
 
 import "./Utils.t.sol";
 
-contract BaseGamesTests is TestSetup, Structs {
+contract BaseGamesTests is Test, TestSetup, Structs {
     function testGenerate() public {
         address p1 = vm.addr(0x1);
         deal(p1, 1 ether);
         address p2 = vm.addr(0x2);
         deal(p2, 1 ether);
-
         vm.prank(p1);
         game.generatePlanet{value: 0.01 ether}();
 
@@ -83,13 +82,23 @@ contract BaseGamesTests is TestSetup, Structs {
         assertEq(resources.tritium, 100);
 
         vm.startPrank(p1);
+        console.log(steel.balanceOf(p1));
+        game.energyPlantUpgrade();
         game.steelMineUpgrade();
         game.quartzMineUpgrade();
         game.tritiumMineUpgrade();
-        vm.warp(3600);
+        vm.warp(ONE_DAY * 10);
+        // game.tritiumMineUpgrade();
         ERC20s memory collectible = game.getCollectibleResources(1);
-        assertEq(collectible.steel, 32);
-        assertEq(collectible.quartz, 21);
-        assertEq(collectible.tritium, 10);
+        assertEq(collectible.steel, 7919);
+        assertEq(collectible.quartz, 5279);
+        assertEq(collectible.tritium, 2639);
+
+        vm.warp(ONE_DAY * 10);
+        game.collectResources();
+        ERC20s memory resources_up = game.getSpendableResources(1);
+        assertEq(resources_up.steel, 8011);
+        assertEq(resources_up.quartz, 5435);
+        assertEq(resources_up.tritium, 2739);
     }
 }

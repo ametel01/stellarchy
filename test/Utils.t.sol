@@ -8,6 +8,7 @@ import "../src/tokens/STERC20.sol";
 import "../src/Stellarchy.sol";
 
 contract TestSetup is Test {
+    uint256 public constant ONE_DAY = 86400;
     STERC721 internal erc721;
     STERC20 internal steel;
     STERC20 internal quartz;
