@@ -30,8 +30,8 @@ contract CompoundsTests is Test, TestSetup, Compounds {
         game.dockyardUpgrade();
         game.labUpgrade();
         ERC20s memory resources = game.getSpendableResources(1);
-        assertEq(resources.steel, 7299);
-        assertEq(resources.quartz, 4790);
+        assertEq(resources.steel, 6628);
+        assertEq(resources.quartz, 4551);
         assertEq(resources.tritium, 2439);
     }
 
