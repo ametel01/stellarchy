@@ -3,7 +3,7 @@ pragma solidity ^0.8.19.0;
 
 import {Structs} from "./libraries/Structs.sol";
 import {Compounds} from "./libraries/Compounds.sol";
-import {Lab} from "./libraries/";
+import {Lab} from "./libraries/Lab.sol";
 import {Dockyard} from "./libraries/Dockyard.sol";
 import {Defences} from "./libraries/Defences.sol";
 import {ISTERC20} from "./tokens/STERC20.sol";

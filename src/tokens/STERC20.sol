@@ -3,6 +3,7 @@ pragma solidity ^0.8.19.0;
 
 import {Ownable} from "openzeppelin/access/Ownable.sol";
 import {ERC20} from "openzeppelin/token/ERC20/ERC20.sol";
+import {IERC20} from "openzeppelin/token/ERC20/IERC20.sol";
 
 interface ISTERC20 is IERC20 {
     function mint(address caller, uint256 amount) external;
