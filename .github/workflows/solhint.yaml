@@ -7,8 +7,8 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: solhint
-              uses: contractshark/inject-solhint-ci@v3.4.1
+              uses: contractshark/inject-solhint-ci
               with:
                   github_token: ${{ secrets.github_token }}
                   reporter: github-pr-review # Change reporter.
-                  solhint_input: "contracts/*.sol"
+                  solhint_input: "src/**/*.sol"
