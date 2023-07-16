@@ -10,7 +10,7 @@ contract Defences {
 
     mapping(uint256 => uint256) public astralLauncherAvailable;
 
-    mapping(uint256 => uint256) public plasmaBeamAvailable;
+    mapping(uint256 => uint256) public plasmaAvailable;
 
     function _getDefencesCost(
         uint256 quantity,
