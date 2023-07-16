@@ -33,7 +33,7 @@ contract Dockyard {
         uint256 dockyardLevel,
         Structs.Techs memory techs
     ) public pure {
-        require(dockyardLevel >= 2, "Level 2 Dockyard is req");
+        require(dockyardLevel >= 3, "Level 2 Dockyard is req");
         require(techs.combustiveDrive >= 2, "Level 2 Combustive Engine req");
     }
 
