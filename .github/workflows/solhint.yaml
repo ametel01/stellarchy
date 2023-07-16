@@ -5,9 +5,9 @@ jobs:
         name: runner / solhint
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3.4.1
+            - uses: actions/checkout@v3
             - name: solhint
-              uses: contractshark/inject-solhint-ci@latest
+              uses: contractshark/inject-solhint-ci@v3.4.1
               with:
                   github_token: ${{ secrets.github_token }}
                   reporter: github-pr-review # Change reporter.
