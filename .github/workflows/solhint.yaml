@@ -4,11 +4,16 @@ jobs:
     solhint:
         name: runner / solhint
         runs-on: ubuntu-latest
+        runs-on: ubuntu-latest
+        node: [14, 16, 18]
         steps:
-            - uses: actions/checkout@v3
-            - name: solhint
-              uses: contractshark/inject-solhint-ci
-              with:
-                  github_token: ${{ secrets.github_token }}
-                  reporter: github-pr-review # Change reporter.
-                  solhint_input: "src/**/*.sol"
+          - uses: actions/checkout@v3
+          - uses: actions/setup-node@v3
+            with:
+              node-version: ${{ matrix.node }}
+          
+          - name: Install dependencies
+            run: npm install --include=dev
+          
+          - name: Run linter
+            run: npm run lint
