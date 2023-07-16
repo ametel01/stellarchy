@@ -27,6 +27,15 @@ library Structs {
         uint256 warpDrive;
     }
 
+    struct ShipsLevels {
+        uint256 carrier;
+        uint256 celestia;
+        uint256 scraper;
+        uint256 sparrow;
+        uint256 frigate;
+        uint256 armade;
+    }
+
     struct Tokens {
         address erc721;
         address steel;
