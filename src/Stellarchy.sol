@@ -195,22 +195,6 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         plasmaEngineeringLevel[planetId] += 1;
     }
 
-    function stellarPhysicsUpgrade() external {
-        collectResources();
-        uint256 planetId = _getTokenOwner(msg.sender);
-        Techs memory techs = _getTechsLevels(planetId);
-        stellarPhysicsRequirements(labLevel[planetId], techs);
-        ERC20s memory cost = getTechCost(
-            stellarPhysicsLevel[planetId],
-            4000,
-            8000,
-            4000
-        );
-        _payResourcesERC20(msg.sender, cost);
-        _updateResourcesSpent(planetId, cost);
-        steelMineLevel[planetId] += 1;
-    }
-
     function armsDevelopmentUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
@@ -353,7 +337,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function getSpendableResources(
         uint256 planetId
-    ) external view returns (ERC20s memory resurces) {
+    ) external view returns (ERC20s memory resources) {
         Interfaces memory interfaces = _getInterfaces();
         ERC20s memory amounts;
         address account = interfaces.erc721.ownerOf(planetId);

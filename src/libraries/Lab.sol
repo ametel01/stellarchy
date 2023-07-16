@@ -68,7 +68,7 @@ contract Lab is Structs {
         Techs memory techs
     ) public pure {
         require(labLevel >= 4, "Level 4 Lab req");
-        require(techs.beamTechnology >= 5, "Level 5 Beam tech Required");
+        require(techs.beamTechnology >= 5, "Level 5 Beam tech req");
         require(techs.energyInnovation >= 4, "Level 4 Energy Innovation  req");
     }
 
@@ -80,15 +80,6 @@ contract Lab is Structs {
         require(techs.beamTechnology >= 10, "Level 10 Beam Tech req");
         require(techs.energyInnovation >= 8, "Level 8 Energy Innovation  req");
         require(techs.spacetimeWarp >= 5, "Level 5 Spacetime Warp req");
-    }
-
-    function stellarPhysicsRequirements(
-        uint256 labLevel,
-        Techs memory techs
-    ) public pure {
-        require(labLevel >= 7, "Level 7 Lab req");
-        require(techs.thrustPropulsion >= 3, "Level 10 Thrust Propulsion req");
-        require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  req");
     }
 
     function armsDevelopmentRequirements(uint256 labLevel) public pure {
