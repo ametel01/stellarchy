@@ -4,16 +4,15 @@ jobs:
     solhint:
         name: runner / solhint
         runs-on: ubuntu-latest
-        runs-on: ubuntu-latest
         node: [14, 16, 18]
         steps:
-          - uses: actions/checkout@v3
-          - uses: actions/setup-node@v3
-            with:
-              node-version: ${{ matrix.node }}
-          
-          - name: Install dependencies
-            run: npm install --include=dev
-          
-          - name: Run linter
-            run: npm run lint
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node }}
+
+            - name: Install dependencies
+              run: npm install --include=dev
+
+            - name: Run linter
+              run: npm run lint
