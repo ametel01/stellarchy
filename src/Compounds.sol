@@ -3,7 +3,7 @@ pragma solidity ^0.8.19 .0;
 
 import {Structs} from "./libraries/Structs.sol";
 
-contract Compounds  {
+contract Compounds {
     mapping(uint256 => uint256) public steelMineLevel;
 
     mapping(uint256 => uint256) public quartzMineLevel;

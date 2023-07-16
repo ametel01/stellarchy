@@ -69,7 +69,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function tritiumMineUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.ERC20s memory cost = _tritiumMineCost(tritiumMineLevel[planetId]);
+        Structs.ERC20s memory cost = _tritiumMineCost(
+            tritiumMineLevel[planetId]
+        );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         tritiumMineLevel[planetId] += 1;
@@ -78,7 +80,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function energyPlantUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.ERC20s memory cost = _energyPlantCost(energyPlantLevel[planetId]);
+        Structs.ERC20s memory cost = _energyPlantCost(
+            energyPlantLevel[planetId]
+        );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         energyPlantLevel[planetId] += 1;
@@ -297,7 +301,11 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         resourcesTimer[planetId] = block.timestamp;
     }
 
-    function getTokenAddresses() external view returns (Structs.Tokens memory tokens) {
+    function getTokenAddresses()
+        external
+        view
+        returns (Structs.Tokens memory tokens)
+    {
         Structs.Tokens memory _tokens;
         _tokens.erc721 = erc721Address;
         _tokens.steel = steelAddress;
@@ -443,7 +451,10 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         }
     }
 
-    function _payResourcesERC20(address caller, Structs.ERC20s memory amounts) private {
+    function _payResourcesERC20(
+        address caller,
+        Structs.ERC20s memory amounts
+    ) private {
         Structs.Interfaces memory interfaces = _getInterfaces();
         if (amounts.steel > 0) {
             require(
