@@ -9,7 +9,8 @@
     },
     "scripts": {
         "test": "forge test",
-        "solhint": "solhint -f table src/**/*"
+        "solhint": "solhint -f table src/**/*",
+        "fmt": "npx prettier --write --plugin=prettier-plugin-solidity 'src/**/*.sol'"
     },
     "repository": {
         "type": "git",
