@@ -4,7 +4,9 @@ jobs:
     solhint:
         name: runner / solhint
         runs-on: ubuntu-latest
-        node: [14, 16, 18]
+        strategy:
+            matrix:
+                node: [14, 16, 18]
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-node@v3
