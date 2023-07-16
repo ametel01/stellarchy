@@ -294,6 +294,17 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         warpDriveLevel[planetId] += 1;
     }
 
+    function carrierBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
+        carrierRequirements(dockyardLevel[planetId], techs);
+        Structs.ERC20s memory cost = getShipsCost(amount, 0, 2000, 500);
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        carrierAvailable[planetId] += amount;
+    }
+
     function celestiaBuild(uint amount) external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
@@ -302,7 +313,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         Structs.ERC20s memory cost = getShipsCost(amount, 0, 2000, 500);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
-        sparrowAvailable[planetId] += amount;
+        celestiaAvailable[planetId] += amount;
     }
 
     function sparrowBuild(uint amount) external {
@@ -435,6 +446,17 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         );
         int256 energyRequired = _calculateEnergyConsumption(mines);
         return int256(grossProduction) - energyRequired;
+    }
+
+    function getShipsLevels(uint256 planeId) external view returns (Structs.ShipsLevels memory) {
+        Structs.ShipsLevels memory ships;
+        ships.carrier = carrierAvailable[planeId];
+        ships.celestia = celestiaAvailable[planeId];
+        ships.scraper = scraperAvailable[planeId];
+        ships.sparrow = sparrowAvailable[planeId];
+        ships.frigate = frigateAvailable[planeId];
+        ships.armade = armadeAvailable[planeId];
+        return ships;
     }
 
     function _initializer(
