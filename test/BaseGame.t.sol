@@ -40,7 +40,7 @@ contract BaseGamesTests is TestSetup {
         vm.prank(p1);
         game.generatePlanet{value: 0.01 ether}();
 
-        Tokens memory tokens = game.getTokenAddresses();
+        Structs.Tokens memory tokens = game.getTokenAddresses();
         assertEq(tokens.erc721, address(erc721));
         assertEq(tokens.steel, address(steel));
         assertEq(tokens.quartz, address(quartz));
@@ -48,14 +48,14 @@ contract BaseGamesTests is TestSetup {
 
         assertEq(game.getNumberOfPlanets(), 1);
 
-        Compounds memory levels = game.getCompoundsLevels(1);
+        Structs.Compounds memory levels = game.getCompoundsLevels(1);
         assertEq(levels.steelMine, 0);
         assertEq(levels.quartzMine, 0);
         assertEq(levels.tritiumMine, 0);
         assertEq(levels.dockyard, 0);
         assertEq(levels.lab, 0);
 
-        CompoundsCost memory costs = game.getCompoundsUpgradeCost(1);
+        Structs.CompoundsCost memory costs = game.getCompoundsUpgradeCost(1);
         assertEq(costs.steelMine.steel, 60);
         assertEq(costs.steelMine.quartz, 15);
 
@@ -76,7 +76,7 @@ contract BaseGamesTests is TestSetup {
         assertEq(costs.lab.quartz, 400);
         assertEq(costs.lab.tritium, 200);
 
-        ERC20s memory resources = game.getSpendableResources(1);
+        Structs.ERC20s memory resources = game.getSpendableResources(1);
         assertEq(resources.steel, 500);
         assertEq(resources.quartz, 300);
         assertEq(resources.tritium, 100);
@@ -88,14 +88,14 @@ contract BaseGamesTests is TestSetup {
         game.tritiumMineUpgrade();
         vm.warp(ONE_DAY * 10);
         // game.tritiumMineUpgrade();
-        ERC20s memory collectible = game.getCollectibleResources(1);
+        Structs.ERC20s memory collectible = game.getCollectibleResources(1);
         assertEq(collectible.steel, 7919);
         assertEq(collectible.quartz, 5279);
         assertEq(collectible.tritium, 2639);
 
         vm.warp(ONE_DAY * 10);
         game.collectResources();
-        ERC20s memory resources_up = game.getSpendableResources(1);
+        Structs.ERC20s memory resources_up = game.getSpendableResources(1);
         assertEq(resources_up.steel, 8011);
         assertEq(resources_up.quartz, 5435);
         assertEq(resources_up.tritium, 2739);

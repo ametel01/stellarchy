@@ -4,7 +4,7 @@ pragma solidity ^0.8.19.0;
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
 
-import {Compounds} from  "../src/libraries/Compounds.sol";
+import {Compounds} from  "../src/Compounds.sol";
 import {Structs} from "../src/libraries/Structs.sol";
 import {TestSetup} from "./Setup.t.sol";
 
@@ -28,7 +28,7 @@ contract CompoundsTest is TestSetup, Compounds {
         game.tritiumMineUpgrade();
         game.dockyardUpgrade();
         game.labUpgrade();
-        ERC20s memory resources = game.getSpendableResources(1);
+        Structs.ERC20s memory resources = game.getSpendableResources(1);
         assertEq(resources.steel, 6628);
         assertEq(resources.quartz, 4551);
         assertEq(resources.tritium, 2439);
@@ -156,38 +156,38 @@ contract CompoundsTest is TestSetup, Compounds {
     }
 
     function testDockyardCost() public {
-        ERC20s memory cost = _dockyardCost(0);
+        Structs.ERC20s memory cost = _dockyardCost(0);
         assertEq(cost.steel, 400);
         assertEq(cost.quartz, 200);
         assertEq(cost.tritium, 100);
-        ERC20s memory cost1 = _dockyardCost(1);
+        Structs.ERC20s memory cost1 = _dockyardCost(1);
         assertEq(cost1.steel, 800);
         assertEq(cost1.quartz, 400);
         assertEq(cost1.tritium, 200);
-        ERC20s memory cost2 = _dockyardCost(5);
+        Structs.ERC20s memory cost2 = _dockyardCost(5);
         assertEq(cost2.steel, 12800);
         assertEq(cost2.quartz, 6400);
         assertEq(cost2.tritium, 3200);
-        ERC20s memory cost3 = _dockyardCost(20);
+        Structs.ERC20s memory cost3 = _dockyardCost(20);
         assertEq(cost3.steel, 419430400);
         assertEq(cost3.quartz, 209715200);
         assertEq(cost3.tritium, 104857600);
     }
 
     function testLabCost() public {
-        ERC20s memory cost1 = _labCost(0);
+        Structs.ERC20s memory cost1 = _labCost(0);
         assertEq(cost1.steel, 200);
         assertEq(cost1.quartz, 400);
         assertEq(cost1.tritium, 200);
-        ERC20s memory cost2 = _labCost(1);
+        Structs.ERC20s memory cost2 = _labCost(1);
         assertEq(cost2.steel, 400);
         assertEq(cost2.quartz, 800);
         assertEq(cost2.tritium, 400);
-        ERC20s memory cost3 = _labCost(5);
+        Structs.ERC20s memory cost3 = _labCost(5);
         assertEq(cost3.steel, 6400);
         assertEq(cost3.quartz, 12800);
         assertEq(cost3.tritium, 6400);
-        ERC20s memory cost4 = _labCost(20);
+        Structs.ERC20s memory cost4 = _labCost(20);
         assertEq(cost4.steel, 209715200);
         assertEq(cost4.quartz, 419430400);
         assertEq(cost4.tritium, 209715200);
