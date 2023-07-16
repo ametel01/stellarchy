@@ -2,10 +2,10 @@
 pragma solidity ^0.8.19 .0;
 
 import {Structs} from "./libraries/Structs.sol";
-import {Compounds} from "./libraries/Compounds.sol";
-import {Lab} from "./libraries/Lab.sol";
-import {Dockyard} from "./libraries/Dockyard.sol";
-import {Defences} from "./libraries/Defences.sol";
+import {Compounds} from "./Compounds.sol";
+import {Lab} from "./Lab.sol";
+import {Dockyard} from "./Dockyard.sol";
+import {Defences} from "./Defences.sol";
 import {ISTERC20} from "./tokens/STERC20.sol";
 import {ISTERC721} from "./tokens/STERC721.sol";
 
@@ -51,7 +51,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function steelMineUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = _steelMineCost(steelMineLevel[planetId]);
+        Structs.ERC20s memory cost = _steelMineCost(steelMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         steelMineLevel[planetId] += 1;
@@ -60,7 +60,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function quartzMineUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = _quartzMineCost(quartzMineLevel[planetId]);
+        Structs.ERC20s memory cost = _quartzMineCost(quartzMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         quartzMineLevel[planetId] += 1;
@@ -69,7 +69,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function tritiumMineUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = _tritiumMineCost(tritiumMineLevel[planetId]);
+        Structs.ERC20s memory cost = _tritiumMineCost(tritiumMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         tritiumMineLevel[planetId] += 1;
@@ -78,7 +78,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function energyPlantUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = _energyPlantCost(energyPlantLevel[planetId]);
+        Structs.ERC20s memory cost = _energyPlantCost(energyPlantLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         energyPlantLevel[planetId] += 1;
@@ -87,7 +87,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function dockyardUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = _dockyardCost(dockyardLevel[planetId]);
+        Structs.ERC20s memory cost = _dockyardCost(dockyardLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         dockyardLevel[planetId] += 1;
@@ -96,7 +96,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function labUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = _labCost(labLevel[planetId]);
+        Structs.ERC20s memory cost = _labCost(labLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         labLevel[planetId] += 1;
@@ -106,7 +106,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         energyInnovationRequirements(labLevel[planetId]);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             energyInnovationLevel[planetId],
             0,
             800,
@@ -121,7 +121,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         digitalSystemsRequirements(labLevel[planetId]);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             digitalSystemsLevel[planetId],
             0,
             400,
@@ -135,9 +135,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function beamTechnologyUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
         beamTechnologyRequirements(labLevel[planetId], techs);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             beamTechnologyLevel[planetId],
             0,
             800,
@@ -152,7 +152,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         armourRequirements(labLevel[planetId]);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             armourInnovationLevel[planetId],
             1000,
             0,
@@ -166,9 +166,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function ionSystemsUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
         ionSystemsRequirements(labLevel[planetId], techs);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             ionSystemsLevel[planetId],
             1000,
             300,
@@ -182,9 +182,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function plasmaEngineeringUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
         plasmaEngineeringRequirements(labLevel[planetId], techs);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             plasmaEngineeringLevel[planetId],
             2000,
             4000,
@@ -199,7 +199,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         armsDevelopmentRequirements(labLevel[planetId]);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             armsDevelopmentLevel[planetId],
             800,
             200,
@@ -213,9 +213,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function shieldTechUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
         shieldTechRequirements(labLevel[planetId], techs);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             shieldTechLevel[planetId],
             200,
             600,
@@ -229,9 +229,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function spacetimeWarpUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
         spacetimeWarpRequirements(labLevel[planetId], techs);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             spacetimeWarpLevel[planetId],
             0,
             4000,
@@ -245,9 +245,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function combustiveDriveUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
         combustiveDriveRequirements(labLevel[planetId], techs);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             combustiveDriveLevel[planetId],
             400,
             0,
@@ -261,9 +261,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function thrustPropulsionUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
         thrustPropulsionRequirements(labLevel[planetId], techs);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             thrustPropulsionLevel[planetId],
             2000,
             4000,
@@ -277,9 +277,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function warpDriveUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
         warpDriveRequirements(labLevel[planetId], techs);
-        ERC20s memory cost = getTechCost(
+        Structs.ERC20s memory cost = getTechCost(
             warpDriveLevel[planetId],
             10000,
             20000,
@@ -292,13 +292,13 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function collectResources() public {
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory amounts = getCollectibleResources(planetId);
+        Structs.ERC20s memory amounts = getCollectibleResources(planetId);
         _recieveResourcesERC20(msg.sender, amounts);
         resourcesTimer[planetId] = block.timestamp;
     }
 
-    function getTokenAddresses() external view returns (Tokens memory tokens) {
-        Tokens memory _tokens;
+    function getTokenAddresses() external view returns (Structs.Tokens memory tokens) {
+        Structs.Tokens memory _tokens;
         _tokens.erc721 = erc721Address;
         _tokens.steel = steelAddress;
         _tokens.quartz = quartzAddress;
@@ -318,14 +318,14 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function getCompoundsLevels(
         uint256 planetId
-    ) public view returns (Compounds memory levels) {
+    ) public view returns (Structs.Compounds memory levels) {
         return _compoundsLevels(planetId);
     }
 
     function getCompoundsUpgradeCost(
         uint256 planetId
-    ) external view returns (CompoundsCost memory cost) {
-        CompoundsCost memory _cost;
+    ) external view returns (Structs.CompoundsCost memory cost) {
+        Structs.CompoundsCost memory _cost;
         _cost.steelMine = _steelMineCost(steelMineLevel[planetId]);
         _cost.quartzMine = _quartzMineCost(quartzMineLevel[planetId]);
         _cost.tritiumMine = _tritiumMineCost(tritiumMineLevel[planetId]);
@@ -337,9 +337,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function getSpendableResources(
         uint256 planetId
-    ) external view returns (ERC20s memory resources) {
-        Interfaces memory interfaces = _getInterfaces();
-        ERC20s memory amounts;
+    ) external view returns (Structs.ERC20s memory resources) {
+        Structs.Interfaces memory interfaces = _getInterfaces();
+        Structs.ERC20s memory amounts;
         address account = interfaces.erc721.ownerOf(planetId);
         amounts.steel = interfaces.steel.balanceOf(account);
         amounts.quartz = interfaces.quartz.balanceOf(account);
@@ -349,8 +349,8 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function getCollectibleResources(
         uint256 planetId
-    ) public view returns (ERC20s memory resources) {
-        ERC20s memory _resources;
+    ) public view returns (Structs.ERC20s memory resources) {
+        Structs.ERC20s memory _resources;
         uint256 timeElapsed = _timeSinceLastCollection(planetId);
         _resources.steel =
             (_steelProduction(steelMineLevel[planetId]) * timeElapsed) /
@@ -367,7 +367,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function getEnergyAvailable(
         uint256 planetId
     ) external view returns (int256) {
-        Compounds memory mines = getCompoundsLevels(planetId);
+        Structs.Compounds memory mines = getCompoundsLevels(planetId);
         uint256 grossProduction = _energyPlantProduction(
             energyPlantLevel[planetId]
         );
@@ -392,8 +392,8 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         return erc721.tokenOf(account);
     }
 
-    function _getInterfaces() private view returns (Interfaces memory) {
-        Interfaces memory interfaces;
+    function _getInterfaces() private view returns (Structs.Interfaces memory) {
+        Structs.Interfaces memory interfaces;
         interfaces.erc721 = ISTERC721(erc721Address);
         interfaces.steel = ISTERC20(steelAddress);
         interfaces.quartz = ISTERC20(quartzAddress);
@@ -403,8 +403,8 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function _compoundsLevels(
         uint256 planetId
-    ) private view returns (Compounds memory) {
-        Compounds memory compounds;
+    ) private view returns (Structs.Compounds memory) {
+        Structs.Compounds memory compounds;
         compounds.steelMine = steelMineLevel[planetId];
         compounds.quartzMine = quartzMineLevel[planetId];
         compounds.tritiumMine = tritiumMineLevel[planetId];
@@ -421,7 +421,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     }
 
     function _mintInitialLiquidity(address caller) private {
-        Interfaces memory interfaces = _getInterfaces();
+        Structs.Interfaces memory interfaces = _getInterfaces();
         interfaces.steel.mint(caller, 500);
         interfaces.quartz.mint(caller, 300);
         interfaces.tritium.mint(caller, 100);
@@ -429,9 +429,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function _recieveResourcesERC20(
         address caller,
-        ERC20s memory amounts
+        Structs.ERC20s memory amounts
     ) private {
-        Interfaces memory interfaces = _getInterfaces();
+        Structs.Interfaces memory interfaces = _getInterfaces();
         if (amounts.steel > 0) {
             interfaces.steel.mint(caller, amounts.steel);
         }
@@ -443,8 +443,8 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         }
     }
 
-    function _payResourcesERC20(address caller, ERC20s memory amounts) private {
-        Interfaces memory interfaces = _getInterfaces();
+    function _payResourcesERC20(address caller, Structs.ERC20s memory amounts) private {
+        Structs.Interfaces memory interfaces = _getInterfaces();
         if (amounts.steel > 0) {
             require(
                 interfaces.steel.balanceOf(caller) >= amounts.steel,
@@ -470,13 +470,13 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function _updateResourcesSpent(
         uint256 planetId,
-        ERC20s memory cost
+        Structs.ERC20s memory cost
     ) private {
         resourcesSpent[planetId] += (cost.steel + cost.quartz);
     }
 
     function _calculateEnergyConsumption(
-        Compounds memory mines
+        Structs.Compounds memory mines
     ) private pure returns (int256) {
         return
             int256(
@@ -488,8 +488,8 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function _getTechsLevels(
         uint256 planetId
-    ) private view returns (Techs memory) {
-        Techs memory techs;
+    ) private view returns (Structs.Techs memory) {
+        Structs.Techs memory techs;
         techs.energyInnovation = energyInnovationLevel[planetId];
         techs.digitalSystems = digitalSystemsLevel[planetId];
         techs.beamTechnology = beamTechnologyLevel[planetId];

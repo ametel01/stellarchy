@@ -4,7 +4,7 @@ pragma solidity ^0.8.19 .0;
 import {ISTERC20} from "../tokens/STERC20.sol";
 import {ISTERC721} from "../tokens/STERC721.sol";
 
-contract Structs {
+library Structs {
     struct ERC20s {
         uint256 steel;
         uint256 quartz;

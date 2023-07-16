@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.19 .0;
 
-import {Structs} from "./Structs.sol";
+import {Structs} from "./libraries/Structs.sol";
 
-contract Defences is Structs {
+contract Defences {
     mapping(uint256 => uint256) public blasterAvailable;
 
     mapping(uint256 => uint256) public beamAvailable;
@@ -17,8 +17,8 @@ contract Defences is Structs {
         uint256 _steel,
         uint256 _quartz,
         uint256 _tritium
-    ) internal pure returns (ERC20s memory) {
-        ERC20s memory cost;
+    ) internal pure returns (Structs.ERC20s memory) {
+        Structs.ERC20s memory cost;
         cost.steel = _steel * quantity;
         cost.quartz = _quartz * quantity;
         cost.tritium = _tritium * quantity;
@@ -31,7 +31,7 @@ contract Defences is Structs {
 
     function _beamRequirements(
         uint256 dockyardLevel,
-        Techs memory techs
+        Structs.Techs memory techs
     ) internal pure {
         require(dockyardLevel >= 2, "Level 2 Dockyard is required");
         require(techs.energyInnovation >= 2, "Level 2 Energy tech required");
@@ -40,7 +40,7 @@ contract Defences is Structs {
 
     function _astralLauncherRequirements(
         uint256 dockyardLevel,
-        Techs memory techs
+        Structs.Techs memory techs
     ) internal pure {
         require(dockyardLevel >= 6, "Level 6 Dockyard is required");
         require(techs.energyInnovation >= 6, "Level 6 Energy tech required");
@@ -50,7 +50,7 @@ contract Defences is Structs {
 
     function _plasmaBeamRequirements(
         uint256 dockyardLevel,
-        Techs memory techs
+        Structs.Techs memory techs
     ) internal pure {
         require(dockyardLevel >= 8, "Level 8 Dockyard is required");
         require(techs.plasmaEngineering >= 7, "Level 7 Plasma tech required");

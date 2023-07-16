@@ -9,7 +9,7 @@ import {STERC20} from "../src/tokens/STERC20.sol";
 import {Stellarchy} from "../src/Stellarchy.sol";
 import {Structs} from "../src/libraries/Structs.sol";
 
-contract TestSetup is Test, Structs {
+contract TestSetup is Test {
     uint256 public constant ONE_DAY = 86400;
     STERC721 internal erc721;
     STERC20 internal steel;

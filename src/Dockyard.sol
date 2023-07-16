@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.19 .0;
 
-import {Structs} from "./Structs.sol";
+import {Structs} from "./libraries/Structs.sol";
 
-contract Dockyard is Structs {
+contract Dockyard {
     mapping(uint256 => uint256) public carrierAvailable;
 
     mapping(uint256 => uint256) public scraperAvailable;
@@ -21,8 +21,8 @@ contract Dockyard is Structs {
         uint256 _steel,
         uint256 _quartz,
         uint256 _tritium
-    ) public pure returns (ERC20s memory) {
-        ERC20s memory cost;
+    ) public pure returns (Structs.ERC20s memory) {
+        Structs.ERC20s memory cost;
         cost.steel = _steel * quantity;
         cost.quartz = _quartz * quantity;
         cost.tritium = _tritium * quantity;

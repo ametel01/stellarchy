@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.19 .0;
 
-import {Structs} from "./Structs.sol";
+import {Structs} from "./libraries/Structs.sol";
 
-contract Compounds is Structs {
+contract Compounds  {
     mapping(uint256 => uint256) public steelMineLevel;
 
     mapping(uint256 => uint256) public quartzMineLevel;
@@ -18,8 +18,8 @@ contract Compounds is Structs {
 
     function _steelMineCost(
         uint256 currentLevel
-    ) internal pure returns (ERC20s memory) {
-        ERC20s memory cost;
+    ) internal pure returns (Structs.ERC20s memory) {
+        Structs.ERC20s memory cost;
         cost.steel = (60 * (15 ** currentLevel)) / 10 ** currentLevel;
         cost.quartz = (15 * (15 ** currentLevel)) / 10 ** currentLevel;
         return cost;
@@ -27,8 +27,8 @@ contract Compounds is Structs {
 
     function _quartzMineCost(
         uint256 currentLevel
-    ) internal pure returns (ERC20s memory) {
-        ERC20s memory cost;
+    ) internal pure returns (Structs.ERC20s memory) {
+        Structs.ERC20s memory cost;
         cost.steel = (48 * (16 ** currentLevel)) / 10 ** currentLevel;
         cost.quartz = (24 * (16 ** currentLevel)) / 10 ** currentLevel;
         return cost;
@@ -36,8 +36,8 @@ contract Compounds is Structs {
 
     function _tritiumMineCost(
         uint256 currentLevel
-    ) internal pure returns (ERC20s memory) {
-        ERC20s memory cost;
+    ) internal pure returns (Structs.ERC20s memory) {
+        Structs.ERC20s memory cost;
         cost.steel = (225 * (15 ** currentLevel)) / 10 ** currentLevel;
         cost.quartz = (75 * (15 ** currentLevel)) / 10 ** currentLevel;
         return cost;
@@ -45,8 +45,8 @@ contract Compounds is Structs {
 
     function _energyPlantCost(
         uint256 currentLevel
-    ) internal pure returns (ERC20s memory) {
-        ERC20s memory cost;
+    ) internal pure returns (Structs.ERC20s memory) {
+        Structs.ERC20s memory cost;
         cost.steel = (75 * (15 ** currentLevel)) / 10 ** currentLevel;
         cost.quartz = (30 * (15 ** currentLevel)) / 10 ** currentLevel;
         return cost;
@@ -54,8 +54,8 @@ contract Compounds is Structs {
 
     function _dockyardCost(
         uint256 currentLevel
-    ) internal pure returns (ERC20s memory) {
-        ERC20s memory cost;
+    ) internal pure returns (Structs.ERC20s memory) {
+        Structs.ERC20s memory cost;
         cost.steel = 400 * 2 ** currentLevel;
         cost.quartz = 200 * 2 ** currentLevel;
         cost.tritium = 100 * 2 ** currentLevel;
@@ -64,8 +64,8 @@ contract Compounds is Structs {
 
     function _labCost(
         uint256 currentLevel
-    ) internal pure returns (ERC20s memory) {
-        ERC20s memory cost;
+    ) internal pure returns (Structs.ERC20s memory) {
+        Structs.ERC20s memory cost;
         cost.steel = 200 * 2 ** currentLevel;
         cost.quartz = 400 * 2 ** currentLevel;
         cost.tritium = 200 * 2 ** currentLevel;
