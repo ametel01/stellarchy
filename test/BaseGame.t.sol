@@ -8,8 +8,8 @@ import {Structs} from "../src/libraries/Structs.sol";
 
 import {TestSetup} from "./Setup.t.sol";
 
-contract BaseGamesTests is Test, TestSetup, Structs {
-    function testGenerate() public {
+contract BaseGamesTests is TestSetup {
+    function test_Generate() public {
         address p1 = vm.addr(0x1);
         deal(p1, 1 ether);
         address p2 = vm.addr(0x2);
@@ -33,7 +33,7 @@ contract BaseGamesTests is Test, TestSetup, Structs {
         assertEq(game.getNumberOfPlanets(), 2);
     }
 
-    function testViews() public {
+    function test_Views() public {
         address p1 = vm.addr(0x1);
         deal(p1, 1 ether);
 
@@ -82,7 +82,6 @@ contract BaseGamesTests is Test, TestSetup, Structs {
         assertEq(resources.tritium, 100);
 
         vm.startPrank(p1);
-        console.log(steel.balanceOf(p1));
         game.energyPlantUpgrade();
         game.steelMineUpgrade();
         game.quartzMineUpgrade();

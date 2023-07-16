@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19 .0;
+pragma solidity ^0.8.19.0;
 
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
+
 import {Compounds} from  "../src/libraries/Compounds.sol";
 import {Structs} from "../src/libraries/Structs.sol";
 import {TestSetup} from "./Setup.t.sol";
 
-contract CounterTest is Test, TestSetup, Structs, Compounds {
-    function testCompoundsUpgrade() public {
+contract CompoundsTest is TestSetup, Compounds {
+    function test_CompoundsUpgrade() public {
         address p1 = vm.addr(0x1);
         deal(p1, 1 ether);
         vm.prank(p1);
@@ -19,7 +20,6 @@ contract CounterTest is Test, TestSetup, Structs, Compounds {
         game.steelMineUpgrade();
         game.quartzMineUpgrade();
         game.tritiumMineUpgrade();
-        console.logInt(game.getEnergyAvailable(1));
         vm.warp(ONE_DAY * 10);
         game.energyPlantUpgrade();
         game.energyPlantUpgrade();
