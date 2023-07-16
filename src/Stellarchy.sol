@@ -294,6 +294,60 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         warpDriveLevel[planetId] += 1;
     }
 
+    function celestiaBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
+        celestiaRequirements(dockyardLevel[planetId], techs);
+        Structs.ERC20s memory cost = getShipsCost(amount, 0, 2000, 500);
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        sparrowAvailable[planetId] += amount;
+    }
+
+    function sparrowBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        sparrowRequirements(dockyardLevel[planetId]);
+        Structs.ERC20s memory cost = getShipsCost(amount, 6000, 4000, 0);
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        sparrowAvailable[planetId] += amount;
+    }
+
+    function scraperBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
+        scraperRequirements(dockyardLevel[planetId], techs);
+        Structs.ERC20s memory cost = getShipsCost(amount, 10000, 6000, 2000);
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        scraperAvailable[planetId] += amount;
+    }
+
+    function frigateBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
+        frigateRequirements(dockyardLevel[planetId], techs);
+        Structs.ERC20s memory cost = getShipsCost(amount, 20000, 7000, 2000);
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        frigateAvailable[planetId] += amount;
+    }
+
+    function armadeBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
+        armadeRequirements(dockyardLevel[planetId], techs);
+        Structs.ERC20s memory cost = getShipsCost(amount, 45000, 15000, 0);
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        armadeAvailable[planetId] += amount;
+    }
+
     function collectResources() public {
         uint256 planetId = _getTokenOwner(msg.sender);
         Structs.ERC20s memory amounts = getCollectibleResources(planetId);
