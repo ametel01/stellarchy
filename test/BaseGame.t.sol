@@ -4,9 +4,9 @@ pragma solidity ^0.8.19;
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
-import "../src/libraries/Structs.sol";
+import {Structs} from "../src/libraries/Structs.sol";
 
-import "./Utils.t.sol";
+import {TestSetup} from "./Setup.t.sol";
 
 contract BaseGamesTests is Test, TestSetup, Structs {
     function testGenerate() public {

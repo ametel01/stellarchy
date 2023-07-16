@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.19 .0;
 
 import "forge-std/Test.sol";
 
-import "../src/tokens/STERC721.sol";
-import "../src/tokens/STERC20.sol";
-import "../src/Stellarchy.sol";
+import {STERC721} from "../src/tokens/STERC721.sol";
+import {STERC20} from "../src/tokens/STERC20.sol";
+import {Stellarchy} from "../src/Stellarchy.sol";
 
 contract TestSetup is Test {
     uint256 public constant ONE_DAY = 86400;
@@ -20,7 +20,12 @@ contract TestSetup is Test {
         steel = new STERC20("Stellarchy Steel", "SST");
         quartz = new STERC20("Stellarchy Quartz", "SQZ");
         tritium = new STERC20("Stellarchy Tritium", "STT");
-        game = new Stellarchy(address(erc721), address(steel), address(quartz), address(tritium));
+        game = new Stellarchy(
+            address(erc721),
+            address(steel),
+            address(quartz),
+            address(tritium)
+        );
 
         erc721.setMinter(address(game));
         steel.setMinter(address(game));

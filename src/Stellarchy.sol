@@ -69,12 +69,12 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         uint256 planetId
     ) external view returns (CompoundsCost memory cost) {
         CompoundsCost memory _cost;
-        _cost.steelMine = steelMineCost(steelMineLevel[planetId]);
-        _cost.quartzMine = quartzMineCost(quartzMineLevel[planetId]);
-        _cost.tritiumMine = tritiumMineCost(tritiumMineLevel[planetId]);
-        _cost.energyPlant = energyPlantCost(energyPlantLevel[planetId]);
-        _cost.dockyard = dockyardCost(dockyardLevel[planetId]);
-        _cost.lab = labCost(labLevel[planetId]);
+        _cost.steelMine = _steelMineCost(steelMineLevel[planetId]);
+        _cost.quartzMine = _quartzMineCost(quartzMineLevel[planetId]);
+        _cost.tritiumMine = _tritiumMineCost(tritiumMineLevel[planetId]);
+        _cost.energyPlant = _energyPlantCost(energyPlantLevel[planetId]);
+        _cost.dockyard = _dockyardCost(dockyardLevel[planetId]);
+        _cost.lab = _labCost(labLevel[planetId]);
         return _cost;
     }
 
@@ -111,7 +111,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         uint256 planetId
     ) external view returns (int256) {
         Compounds memory mines = getCompoundsLevels(planetId);
-        uint256 grossProduction = energyPlantProduction(
+        uint256 grossProduction = _energyPlantProduction(
             energyPlantLevel[planetId]
         );
         int256 energyRequired = _calculateEnergyConsumption(mines);
@@ -138,7 +138,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function steelMineUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = steelMineCost(steelMineLevel[planetId]);
+        ERC20s memory cost = _steelMineCost(steelMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         steelMineLevel[planetId] += 1;
@@ -147,7 +147,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function quartzMineUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = quartzMineCost(quartzMineLevel[planetId]);
+        ERC20s memory cost = _quartzMineCost(quartzMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         quartzMineLevel[planetId] += 1;
@@ -156,7 +156,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function tritiumMineUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = tritiumMineCost(tritiumMineLevel[planetId]);
+        ERC20s memory cost = _tritiumMineCost(tritiumMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         tritiumMineLevel[planetId] += 1;
@@ -165,7 +165,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function energyPlantUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = energyPlantCost(energyPlantLevel[planetId]);
+        ERC20s memory cost = _energyPlantCost(energyPlantLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         energyPlantLevel[planetId] += 1;
@@ -174,7 +174,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function dockyardUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = dockyardCost(dockyardLevel[planetId]);
+        ERC20s memory cost = _dockyardCost(dockyardLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         dockyardLevel[planetId] += 1;
@@ -183,7 +183,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function labUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        ERC20s memory cost = labCost(labLevel[planetId]);
+        ERC20s memory cost = _labCost(labLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         labLevel[planetId] += 1;
@@ -502,9 +502,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     ) internal pure returns (int256) {
         return
             int256(
-                baseMineConsumption(mines.steelMine) +
-                    baseMineConsumption(mines.quartzMine) +
-                    tritiumMineConsumption(mines.tritiumMine)
+                _baseMineConsumption(mines.steelMine) +
+                    _baseMineConsumption(mines.quartzMine) +
+                    _tritiumMineConsumption(mines.tritiumMine)
             );
     }
 

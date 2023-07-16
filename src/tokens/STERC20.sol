@@ -29,7 +29,7 @@ contract STERC20 is ERC20, Ownable {
     }
 
     function burn(address caller, uint256 amount) external virtual {
-        require(msg.sender == minter, "caller is not minter");
+        require(msg.sender == _minter, "caller is not minter");
         _burn(caller, amount);
     }
 }

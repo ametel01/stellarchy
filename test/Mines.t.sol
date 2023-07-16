@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.19 .0;
 
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
 
-import "./Utils.t.sol";
-import "../src/libraries/Compounds.sol";
-import "../src/libraries/Structs.sol";
+import {TestSetup} from "./Setup.t.sol";
+import {Compounds} from "../src/libraries/Compounds.sol";
+import {Structs} from "../src/libraries/Structs.sol";
 
 contract CompoundsTests is Test, TestSetup, Compounds {
     function testCompoundsUpgrade() public {
@@ -36,123 +36,123 @@ contract CompoundsTests is Test, TestSetup, Compounds {
     }
 
     function testSteelMineCost() public {
-        assertEq(steelMineCost(0).steel, 60);
-        assertEq(steelMineCost(0).quartz, 15);
-        assertEq(steelMineCost(1).steel, 90);
-        assertEq(steelMineCost(1).quartz, 22);
-        assertEq(steelMineCost(5).steel, 455);
-        assertEq(steelMineCost(5).quartz, 113);
-        assertEq(steelMineCost(30).steel, 11505063);
-        assertEq(steelMineCost(30).quartz, 2876265);
+        assertEq(_steelMineCost(0).steel, 60);
+        assertEq(_steelMineCost(0).quartz, 15);
+        assertEq(_steelMineCost(1).steel, 90);
+        assertEq(_steelMineCost(1).quartz, 22);
+        assertEq(_steelMineCost(5).steel, 455);
+        assertEq(_steelMineCost(5).quartz, 113);
+        assertEq(_steelMineCost(30).steel, 11505063);
+        assertEq(_steelMineCost(30).quartz, 2876265);
     }
 
     function testQuartzMineCost() public {
-        assertEq(quartzMineCost(0).steel, 48);
-        assertEq(quartzMineCost(0).quartz, 24);
-        assertEq(quartzMineCost(1).steel, 76);
-        assertEq(quartzMineCost(1).quartz, 38);
-        assertEq(quartzMineCost(5).steel, 503);
-        assertEq(quartzMineCost(5).quartz, 251);
-        assertEq(quartzMineCost(30).steel, 63802943);
-        assertEq(quartzMineCost(30).quartz, 31901471);
+        assertEq(_quartzMineCost(0).steel, 48);
+        assertEq(_quartzMineCost(0).quartz, 24);
+        assertEq(_quartzMineCost(1).steel, 76);
+        assertEq(_quartzMineCost(1).quartz, 38);
+        assertEq(_quartzMineCost(5).steel, 503);
+        assertEq(_quartzMineCost(5).quartz, 251);
+        assertEq(_quartzMineCost(30).steel, 63802943);
+        assertEq(_quartzMineCost(30).quartz, 31901471);
     }
 
     function testTritiumMineCost() public {
-        assertEq(tritiumMineCost(0).steel, 225);
-        assertEq(tritiumMineCost(0).quartz, 75);
-        assertEq(tritiumMineCost(1).steel, 337);
-        assertEq(tritiumMineCost(1).quartz, 112);
-        assertEq(tritiumMineCost(5).steel, 1708);
-        assertEq(tritiumMineCost(5).quartz, 569);
-        assertEq(tritiumMineCost(30).steel, 43143988);
-        assertEq(tritiumMineCost(30).quartz, 14381329);
+        assertEq(_tritiumMineCost(0).steel, 225);
+        assertEq(_tritiumMineCost(0).quartz, 75);
+        assertEq(_tritiumMineCost(1).steel, 337);
+        assertEq(_tritiumMineCost(1).quartz, 112);
+        assertEq(_tritiumMineCost(5).steel, 1708);
+        assertEq(_tritiumMineCost(5).quartz, 569);
+        assertEq(_tritiumMineCost(30).steel, 43143988);
+        assertEq(_tritiumMineCost(30).quartz, 14381329);
     }
 
     function testEnergyPlantMineCost() public {
-        assertEq(energyPlantCost(0).steel, 75);
-        assertEq(energyPlantCost(0).quartz, 30);
-        assertEq(energyPlantCost(1).steel, 112);
-        assertEq(energyPlantCost(1).quartz, 45);
-        assertEq(energyPlantCost(5).steel, 569);
-        assertEq(energyPlantCost(5).quartz, 227);
-        assertEq(energyPlantCost(30).steel, 14381329);
-        assertEq(energyPlantCost(30).quartz, 5752531);
+        assertEq(_energyPlantCost(0).steel, 75);
+        assertEq(_energyPlantCost(0).quartz, 30);
+        assertEq(_energyPlantCost(1).steel, 112);
+        assertEq(_energyPlantCost(1).quartz, 45);
+        assertEq(_energyPlantCost(5).steel, 569);
+        assertEq(_energyPlantCost(5).quartz, 227);
+        assertEq(_energyPlantCost(30).steel, 14381329);
+        assertEq(_energyPlantCost(30).quartz, 5752531);
     }
 
     function testSteelProduction() public {
-        uint256 s0 = steelProduction(0);
+        uint256 s0 = _steelProduction(0);
         assertEq(s0, 0);
-        uint256 s1 = steelProduction(1);
+        uint256 s1 = _steelProduction(1);
         assertEq(s1, 33);
-        uint256 s2 = steelProduction(5);
+        uint256 s2 = _steelProduction(5);
         assertEq(s2, 241);
-        uint256 s3 = steelProduction(30);
+        uint256 s3 = _steelProduction(30);
         assertEq(s3, 15704);
     }
 
     function testQuartzProduction() public {
-        uint256 s0 = quartzProduction(0);
+        uint256 s0 = _quartzProduction(0);
         assertEq(s0, 0);
-        uint256 s1 = quartzProduction(1);
+        uint256 s1 = _quartzProduction(1);
         assertEq(s1, 22);
-        uint256 s2 = quartzProduction(5);
+        uint256 s2 = _quartzProduction(5);
         assertEq(s2, 161);
-        uint256 s3 = quartzProduction(30);
+        uint256 s3 = _quartzProduction(30);
         assertEq(s3, 10469);
     }
 
     function testTritiumProduction() public {
-        uint256 s0 = tritiumProduction(0);
+        uint256 s0 = _tritiumProduction(0);
         assertEq(s0, 0);
-        uint256 s1 = tritiumProduction(1);
+        uint256 s1 = _tritiumProduction(1);
         assertEq(s1, 11);
-        uint256 s2 = tritiumProduction(5);
+        uint256 s2 = _tritiumProduction(5);
         assertEq(s2, 80);
-        uint256 s3 = tritiumProduction(30);
+        uint256 s3 = _tritiumProduction(30);
         assertEq(s3, 5234);
     }
 
     function testEnergyPlantProduction() public {
-        uint256 s0 = energyPlantProduction(0);
+        uint256 s0 = _energyPlantProduction(0);
         assertEq(s0, 0);
-        uint256 s1 = energyPlantProduction(1);
+        uint256 s1 = _energyPlantProduction(1);
         assertEq(s1, 22);
-        uint256 s2 = energyPlantProduction(5);
+        uint256 s2 = _energyPlantProduction(5);
         assertEq(s2, 161);
-        uint256 s3 = energyPlantProduction(30);
+        uint256 s3 = _energyPlantProduction(30);
         assertEq(s3, 10469);
     }
 
     function testBeseConsumption() public {
-        uint256 s0 = baseMineConsumption(0);
+        uint256 s0 = _baseMineConsumption(0);
         assertEq(s0, 0);
-        uint256 s1 = baseMineConsumption(1);
+        uint256 s1 = _baseMineConsumption(1);
         assertEq(s1, 11);
-        uint256 s2 = baseMineConsumption(5);
+        uint256 s2 = _baseMineConsumption(5);
         assertEq(s2, 80);
-        uint256 s3 = baseMineConsumption(30);
+        uint256 s3 = _baseMineConsumption(30);
         assertEq(s3, 5234);
     }
 
     function testTritiumConsumption() public {
-        uint256 s0 = tritiumMineConsumption(0);
+        uint256 s0 = _tritiumMineConsumption(0);
         assertEq(s0, 0);
-        uint256 s1 = tritiumMineConsumption(1);
+        uint256 s1 = _tritiumMineConsumption(1);
         assertEq(s1, 22);
-        uint256 s2 = tritiumMineConsumption(5);
+        uint256 s2 = _tritiumMineConsumption(5);
         assertEq(s2, 161);
-        uint256 s3 = tritiumMineConsumption(30);
+        uint256 s3 = _tritiumMineConsumption(30);
         assertEq(s3, 10469);
     }
 
     function testProductionScaler() public {
-        uint256 s0 = productionScaler(22, 100, 50);
+        uint256 s0 = _productionScaler(22, 100, 50);
         assertEq(s0, 22);
-        uint256 s1 = productionScaler(22, 80, 100);
+        uint256 s1 = _productionScaler(22, 80, 100);
         assertEq(s1, 17);
-        uint256 s2 = productionScaler(22, 60, 100);
+        uint256 s2 = _productionScaler(22, 60, 100);
         assertEq(s2, 13);
-        uint256 s3 = productionScaler(22, 20, 100);
+        uint256 s3 = _productionScaler(22, 20, 100);
         assertEq(s3, 4);
     }
 }
