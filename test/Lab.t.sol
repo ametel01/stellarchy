@@ -58,4 +58,22 @@ contract LabTest is Test, TestSetup {
         // game.stellarPhysicsUpgrade(); // stellarphysics 1
         game.warpDriveUpgrade(); // warpdrive 1
     }
+
+    function testFail_Upgrade() public {
+        address p1 = testSetUp();
+        vm.startPrank(p1);
+
+        game.energyInnovationUpgrade();
+        game.digitalSystemsUpgrade();
+        game.beamTechnologyUpgrade();
+        game.armourInnovationUpgrade();
+        game.ionSystemsUpgrade();
+        game.plasmaEngineeringUpgrade();
+        game.armsDevelopmentUpgrade();
+        game.shieldTechUpgrade();
+        game.spacetimeWarpUpgrade();
+        game.combustiveDriveUpgrade();
+        game.thrustPropulsionUpgrade();
+        game.warpDriveUpgrade();
+    }
 }
