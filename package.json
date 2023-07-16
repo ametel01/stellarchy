@@ -1,0 +1,24 @@
+{
+    "name": "stellarchy",
+    "version": "1.0.0",
+    "description": "Contracts for a on-chain MMO",
+    "main": "index.js",
+    "directories": {
+        "lib": "lib",
+        "test": "test"
+    },
+    "scripts": {
+        "test": "forge test",
+        "solhint": "solhint -f table src/**/*"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ametel01/stellarchy.git"
+    },
+    "author": "ametel01",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ametel01/stellarchy/issues"
+    },
+    "homepage": "https://github.com/ametel01/stellarchy#readme"
+}
