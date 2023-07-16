@@ -5,7 +5,7 @@ jobs:
         name: runner / solhint
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v3.4.1
             - name: solhint
               uses: contractshark/inject-solhint-ci@latest
               with:
