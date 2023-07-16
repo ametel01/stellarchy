@@ -58,11 +58,4 @@ contract LabTest is Test, TestSetup {
         // game.stellarPhysicsUpgrade(); // stellarphysics 1
         game.warpDriveUpgrade(); // warpdrive 1
     }
-
-    // function testFail_Upgrade() public {
-    //     address p1 = testSetUp();
-
-
-
-    // }
 }
