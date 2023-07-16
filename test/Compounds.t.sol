@@ -9,7 +9,7 @@ import {Structs} from "../src/libraries/Structs.sol";
 import {TestSetup} from "./Setup.t.sol";
 
 contract CompoundsTest is TestSetup, Compounds {
-    function test_CompoundsUpgrade() public {
+    function test_CompoundsUpgrades() public {
         address p1 = vm.addr(0x1);
         deal(p1, 1 ether);
         vm.prank(p1);
