@@ -36,6 +36,13 @@ library Structs {
         uint256 armade;
     }
 
+    struct DefencesLevels {
+        uint blaster;
+        uint256 beam;
+        uint256 astralLauncher;
+        uint256 plasmaProjector;
+    }
+
     struct Tokens {
         address erc721;
         address steel;
