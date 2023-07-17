@@ -359,6 +359,59 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         armadeAvailable[planetId] += amount;
     }
 
+    function blasterBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        blasterRequirements(dockyardLevel[planetId]);
+        Structs.ERC20s memory cost = getDefencesCost(amount, 2000, 0, 0);
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        blasterAvailable[planetId] += amount;
+    }
+
+    function beamBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
+        beamRequirements(dockyardLevel[planetId], techs);
+        Structs.ERC20s memory cost = getDefencesCost(amount, 6000, 2000, 0);
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        beamAvailable[planetId] += amount;
+    }
+
+    function astralLauncherBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
+        astralLauncherRequirements(dockyardLevel[planetId], techs);
+        Structs.ERC20s memory cost = getDefencesCost(
+            amount,
+            20000,
+            15000,
+            2000
+        );
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        astralLauncherAvailable[planetId] += amount;
+    }
+
+    function plasmaProjectorBuild(uint amount) external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        Structs.Techs memory techs = _getTechsLevels(planetId);
+        plasmaProjectorRequirements(dockyardLevel[planetId], techs);
+        Structs.ERC20s memory cost = getDefencesCost(
+            amount,
+            50000,
+            50000,
+            3000
+        );
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        plasmaAvailable[planetId] += amount;
+    }
+
     function collectResources() public {
         uint256 planetId = _getTokenOwner(msg.sender);
         Structs.ERC20s memory amounts = getCollectibleResources(planetId);
@@ -448,7 +501,9 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         return int256(grossProduction) - energyRequired;
     }
 
-    function getShipsLevels(uint256 planeId) external view returns (Structs.ShipsLevels memory) {
+    function getShipsLevels(
+        uint256 planeId
+    ) external view returns (Structs.ShipsLevels memory) {
         Structs.ShipsLevels memory ships;
         ships.carrier = carrierAvailable[planeId];
         ships.celestia = celestiaAvailable[planeId];
@@ -457,6 +512,17 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         ships.frigate = frigateAvailable[planeId];
         ships.armade = armadeAvailable[planeId];
         return ships;
+    }
+
+    function getDefencesLevels(
+        uint256 planeId
+    ) external view returns (Structs.DefencesLevels memory) {
+        Structs.DefencesLevels memory defences;
+        defences.blaster = blasterAvailable[planeId];
+        defences.beam = beamAvailable[planeId];
+        defences.astralLauncher = astralLauncherAvailable[planeId];
+        defences.plasmaProjector = plasmaAvailable[planeId];
+        return defences;
     }
 
     function _initializer(
