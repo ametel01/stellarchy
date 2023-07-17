@@ -4,11 +4,10 @@ pragma solidity ^0.8.19.0;
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
 
-import {Dockyard} from  "../src/Dockyard.sol";
 import {Structs} from "../src/libraries/Structs.sol";
 import {TestSetup} from "./Setup.t.sol";
 
-contract DockyardTest is TestSetup, Dockyard {
+contract DockyardTest is TestSetup{
     function test_DockyardUpgrades() public {
         address p1 = testSetUp();
 
