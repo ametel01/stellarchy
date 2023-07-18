@@ -150,7 +150,7 @@ contract Lab {
             cost.quartz = 4000;
             cost.tritium = 2000;
         } else if (id == ID.COMBUSTIVE_DRIVE) {
-            cost.steel = 0;
+            cost.steel = 400;
             cost.tritium = 600;
         } else if (id == ID.THRUST_PROPULSION) {
             cost.steel = 2000;
@@ -165,7 +165,6 @@ contract Lab {
         } else if (id == ID.ARMS_DEVELOPMENT) {
             cost.steel = 800;
             cost.quartz = 200;
-            cost.tritium = 0;
         } else if (id == ID.SHIELD_TECH) {
             cost.steel = 200;
             cost.quartz = 600;
