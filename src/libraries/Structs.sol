@@ -50,6 +50,15 @@ library Structs {
         uint256 armade;
     }
 
+    struct ShipsCost {
+        ERC20s carrier;
+        ERC20s celestia;
+        ERC20s scraper;
+        ERC20s sparrow;
+        ERC20s frigate;
+        ERC20s armade;
+    }
+
     struct DefencesLevels {
         uint blaster;
         uint256 beam;
