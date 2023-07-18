@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.19 .0;
 
-import {Structs} from "./libraries/Structs.sol";
+import {Structs as S} from "./libraries/Structs.sol";
 import {ID} from "./libraries/ID.sol";
 
 contract Lab {
@@ -33,9 +33,9 @@ contract Lab {
 
     function techUpgradeCost(
         uint256 currentLevel,
-        Structs.ERC20s memory cost
-    ) internal pure returns (Structs.ERC20s memory) {
-        Structs.ERC20s memory _cost;
+        S.ERC20s memory cost
+    ) internal pure returns (S.ERC20s memory) {
+        S.ERC20s memory _cost;
         _cost.steel = cost.steel * 2 ** currentLevel;
         _cost.quartz = cost.quartz * 2 ** currentLevel;
         _cost.tritium = cost.tritium * 2 ** currentLevel;
@@ -52,7 +52,7 @@ contract Lab {
 
     function beamTechnologyRequirements(
         uint256 labLevel,
-        Structs.Techs memory techs
+        S.Techs memory techs
     ) internal pure {
         require(labLevel >= 1, "Level 1 Lab req");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation req");
@@ -64,7 +64,7 @@ contract Lab {
 
     function ionSystemsRequirements(
         uint256 labLevel,
-        Structs.Techs memory techs
+        S.Techs memory techs
     ) internal pure {
         require(labLevel >= 4, "Level 4 Lab req");
         require(techs.beamTechnology >= 5, "Level 5 Beam tech req");
@@ -73,7 +73,7 @@ contract Lab {
 
     function plasmaEngineeringRequirements(
         uint256 labLevel,
-        Structs.Techs memory techs
+        S.Techs memory techs
     ) internal pure {
         require(labLevel >= 4, "Level 4 Lab req");
         require(techs.beamTechnology >= 10, "Level 10 Beam Tech req");
@@ -87,7 +87,7 @@ contract Lab {
 
     function shieldTechRequirements(
         uint256 labLevel,
-        Structs.Techs memory techs
+        S.Techs memory techs
     ) internal pure {
         require(labLevel >= 6, "Level 6 Lab req");
         require(techs.energyInnovation >= 6, "Level 6 Energy Innovation  req");
@@ -95,7 +95,7 @@ contract Lab {
 
     function spacetimeWarpRequirements(
         uint256 labLevel,
-        Structs.Techs memory techs
+        S.Techs memory techs
     ) internal pure {
         require(labLevel >= 7, "Level 7 Lab req");
         require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  req");
@@ -104,7 +104,7 @@ contract Lab {
 
     function combustiveDriveRequirements(
         uint256 labLevel,
-        Structs.Techs memory techs
+        S.Techs memory techs
     ) internal pure {
         require(labLevel >= 1, "Level 1 Lab req");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  req");
@@ -112,7 +112,7 @@ contract Lab {
 
     function thrustPropulsionRequirements(
         uint256 labLevel,
-        Structs.Techs memory techs
+        S.Techs memory techs
     ) internal pure {
         require(labLevel >= 2, "Level 2 Lab req");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  req");
@@ -120,15 +120,15 @@ contract Lab {
 
     function warpDriveRequirements(
         uint256 labLevel,
-        Structs.Techs memory techs
+        S.Techs memory techs
     ) internal pure {
         require(labLevel >= 7, "Level 7 Lab req");
         require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  req");
         require(techs.spacetimeWarp >= 3, "Level 3 Spacetime Warp req");
     }
 
-    function techCost(uint id) internal pure returns (Structs.ERC20s memory) {
-        Structs.ERC20s memory cost;
+    function techCost(uint id) internal pure returns (S.ERC20s memory) {
+        S.ERC20s memory cost;
         if (id == ID.ENERGY_INNOVATION) {
             cost.quartz = 800;
             cost.tritium = 400;
@@ -169,6 +169,61 @@ contract Lab {
             cost.steel = 200;
             cost.quartz = 600;
         }
+        return cost;
+    }
+
+    function _techsCost(
+        S.Techs memory techs
+    ) internal pure returns (S.TechsCost memory) {
+        S.TechsCost memory cost;
+        cost.energyInnovation = techUpgradeCost(
+            techs.energyInnovation,
+            techCost(ID.ENERGY_INNOVATION)
+        );
+        cost.digitalSystems = techUpgradeCost(
+            techs.digitalSystems,
+            techCost(ID.DIGITAL_SYSTEMS)
+        );
+        cost.beamTechnology = techUpgradeCost(
+            techs.beamTechnology,
+            techCost(ID.BEAM_TECHNOLOGY)
+        );
+        cost.armourInnovation = techUpgradeCost(
+            techs.armourInnovation,
+            techCost(ID.ARMOUR_INNOVATION)
+        );
+        cost.ionSystems = techUpgradeCost(
+            techs.ionSystems,
+            techCost(ID.ION_SYSTEMS)
+        );
+        cost.plasmaEngineering = techUpgradeCost(
+            techs.plasmaEngineering,
+            techCost(ID.PLASMA_ENGINEERING)
+        );
+        cost.armsDevelopment = techUpgradeCost(
+            techs.armsDevelopment,
+            techCost(ID.ARMS_DEVELOPMENT)
+        );
+        cost.shieldTech = techUpgradeCost(
+            techs.shieldTech,
+            techCost(ID.SHIELD_TECH)
+        );
+        cost.spacetimeWarp = techUpgradeCost(
+            techs.spacetimeWarp,
+            techCost(ID.SPACETIME_WARP)
+        );
+        cost.combustiveDrive = techUpgradeCost(
+            techs.combustiveDrive,
+            techCost(ID.COMBUSTIVE_DRIVE)
+        );
+        cost.thrustPropulsion = techUpgradeCost(
+            techs.thrustPropulsion,
+            techCost(ID.THRUST_PROPULSION)
+        );
+        cost.warpDrive = techUpgradeCost(
+            techs.warpDrive,
+            techCost(ID.WARP_DRIVE)
+        );
         return cost;
     }
 }

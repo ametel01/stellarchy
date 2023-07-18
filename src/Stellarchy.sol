@@ -515,57 +515,8 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function getTechsUpgradeCosts(
         uint256 planetId
     ) public view returns (S.TechsCost memory) {
-        S.TechsCost memory cost;
         S.Techs memory techs = getTechsLevels(planetId);
-        cost.energyInnovation = techUpgradeCost(
-            techs.energyInnovation,
-            techCost(ID.ENERGY_INNOVATION)
-        );
-        cost.digitalSystems = techUpgradeCost(
-            techs.digitalSystems,
-            techCost(ID.DIGITAL_SYSTEMS)
-        );
-        cost.beamTechnology = techUpgradeCost(
-            techs.beamTechnology,
-            techCost(ID.BEAM_TECHNOLOGY)
-        );
-        cost.armourInnovation = techUpgradeCost(
-            techs.armourInnovation,
-            techCost(ID.ARMOUR_INNOVATION)
-        );
-        cost.ionSystems = techUpgradeCost(
-            techs.ionSystems,
-            techCost(ID.ION_SYSTEMS)
-        );
-        cost.plasmaEngineering = techUpgradeCost(
-            techs.plasmaEngineering,
-            techCost(ID.PLASMA_ENGINEERING)
-        );
-        cost.armsDevelopment = techUpgradeCost(
-            techs.armsDevelopment,
-            techCost(ID.ARMS_DEVELOPMENT)
-        );
-        cost.shieldTech = techUpgradeCost(
-            techs.shieldTech,
-            techCost(ID.SHIELD_TECH)
-        );
-        cost.spacetimeWarp = techUpgradeCost(
-            techs.spacetimeWarp,
-            techCost(ID.SPACETIME_WARP)
-        );
-        cost.combustiveDrive = techUpgradeCost(
-            techs.combustiveDrive,
-            techCost(ID.COMBUSTIVE_DRIVE)
-        );
-        cost.thrustPropulsion = techUpgradeCost(
-            techs.thrustPropulsion,
-            techCost(ID.THRUST_PROPULSION)
-        );
-        cost.warpDrive = techUpgradeCost(
-            techs.warpDrive,
-            techCost(ID.WARP_DRIVE)
-        );
-        return cost;
+        return _techsCost(techs);
     }
 
     function getShipsLevels(
