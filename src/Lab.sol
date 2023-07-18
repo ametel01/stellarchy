@@ -5,36 +5,36 @@ import {Structs} from "./libraries/Structs.sol";
 import {ID} from "./libraries/ID.sol";
 
 contract Lab {
-    mapping(uint256 => uint256) public energyInnovationLevel;
+    mapping(uint256 => uint256) internal energyInnovationLevel;
 
-    mapping(uint256 => uint256) public digitalSystemsLevel;
+    mapping(uint256 => uint256) internal digitalSystemsLevel;
 
-    mapping(uint256 => uint256) public beamTechnologyLevel;
+    mapping(uint256 => uint256) internal beamTechnologyLevel;
 
-    mapping(uint256 => uint256) public armourInnovationLevel;
+    mapping(uint256 => uint256) internal armourInnovationLevel;
 
-    mapping(uint256 => uint256) public ionSystemsLevel;
+    mapping(uint256 => uint256) internal ionSystemsLevel;
 
-    mapping(uint256 => uint256) public plasmaEngineeringLevel;
+    mapping(uint256 => uint256) internal plasmaEngineeringLevel;
 
-    mapping(uint256 => uint256) public stellarPhysicsLevel;
+    mapping(uint256 => uint256) internal stellarPhysicsLevel;
 
-    mapping(uint256 => uint256) public armsDevelopmentLevel;
+    mapping(uint256 => uint256) internal armsDevelopmentLevel;
 
-    mapping(uint256 => uint256) public shieldTechLevel;
+    mapping(uint256 => uint256) internal shieldTechLevel;
 
-    mapping(uint256 => uint256) public spacetimeWarpLevel;
+    mapping(uint256 => uint256) internal spacetimeWarpLevel;
 
-    mapping(uint256 => uint256) public combustiveDriveLevel;
+    mapping(uint256 => uint256) internal combustiveDriveLevel;
 
-    mapping(uint256 => uint256) public thrustPropulsionLevel;
+    mapping(uint256 => uint256) internal thrustPropulsionLevel;
 
-    mapping(uint256 => uint256) public warpDriveLevel;
+    mapping(uint256 => uint256) internal warpDriveLevel;
 
     function techUpgradeCost(
         uint256 currentLevel,
         Structs.ERC20s memory cost
-    ) public pure returns (Structs.ERC20s memory) {
+    ) internal pure returns (Structs.ERC20s memory) {
         Structs.ERC20s memory _cost;
         _cost.steel = cost.steel * 2 ** currentLevel;
         _cost.quartz = cost.quartz * 2 ** currentLevel;
@@ -42,30 +42,30 @@ contract Lab {
         return _cost;
     }
 
-    function energyInnovationRequirements(uint256 labLevel) public pure {
+    function energyInnovationRequirements(uint256 labLevel) internal pure {
         require(labLevel >= 1, "Level 1 Lab req");
     }
 
-    function digitalSystemsRequirements(uint256 labLevel) public pure {
+    function digitalSystemsRequirements(uint256 labLevel) internal pure {
         require(labLevel >= 1, "Level 1 Lab req");
     }
 
     function beamTechnologyRequirements(
         uint256 labLevel,
         Structs.Techs memory techs
-    ) public pure {
+    ) internal pure {
         require(labLevel >= 1, "Level 1 Lab req");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation req");
     }
 
-    function armourRequirements(uint256 labLevel) public pure {
+    function armourRequirements(uint256 labLevel) internal pure {
         require(labLevel >= 2, "Level 2 Lab req");
     }
 
     function ionSystemsRequirements(
         uint256 labLevel,
         Structs.Techs memory techs
-    ) public pure {
+    ) internal pure {
         require(labLevel >= 4, "Level 4 Lab req");
         require(techs.beamTechnology >= 5, "Level 5 Beam tech req");
         require(techs.energyInnovation >= 4, "Level 4 Energy Innovation  req");
@@ -74,21 +74,21 @@ contract Lab {
     function plasmaEngineeringRequirements(
         uint256 labLevel,
         Structs.Techs memory techs
-    ) public pure {
+    ) internal pure {
         require(labLevel >= 4, "Level 4 Lab req");
         require(techs.beamTechnology >= 10, "Level 10 Beam Tech req");
         require(techs.energyInnovation >= 8, "Level 8 Energy Innovation  req");
         require(techs.spacetimeWarp >= 5, "Level 5 Spacetime Warp req");
     }
 
-    function armsDevelopmentRequirements(uint256 labLevel) public pure {
+    function armsDevelopmentRequirements(uint256 labLevel) internal pure {
         require(labLevel >= 4, "Level 4 Lab req");
     }
 
     function shieldTechRequirements(
         uint256 labLevel,
         Structs.Techs memory techs
-    ) public pure {
+    ) internal pure {
         require(labLevel >= 6, "Level 6 Lab req");
         require(techs.energyInnovation >= 6, "Level 6 Energy Innovation  req");
     }
@@ -96,7 +96,7 @@ contract Lab {
     function spacetimeWarpRequirements(
         uint256 labLevel,
         Structs.Techs memory techs
-    ) public pure {
+    ) internal pure {
         require(labLevel >= 7, "Level 7 Lab req");
         require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  req");
         require(techs.shieldTech >= 5, "Level 5 Shield Tech req");
@@ -105,7 +105,7 @@ contract Lab {
     function combustiveDriveRequirements(
         uint256 labLevel,
         Structs.Techs memory techs
-    ) public pure {
+    ) internal pure {
         require(labLevel >= 1, "Level 1 Lab req");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  req");
     }
@@ -113,7 +113,7 @@ contract Lab {
     function thrustPropulsionRequirements(
         uint256 labLevel,
         Structs.Techs memory techs
-    ) public pure {
+    ) internal pure {
         require(labLevel >= 2, "Level 2 Lab req");
         require(techs.energyInnovation >= 1, "Level 1 Energy Innovation  req");
     }
@@ -121,13 +121,13 @@ contract Lab {
     function warpDriveRequirements(
         uint256 labLevel,
         Structs.Techs memory techs
-    ) public pure {
+    ) internal pure {
         require(labLevel >= 7, "Level 7 Lab req");
         require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  req");
         require(techs.spacetimeWarp >= 3, "Level 3 Spacetime Warp req");
     }
 
-    function techCost(uint id) public pure returns (Structs.ERC20s memory) {
+    function techCost(uint id) internal pure returns (Structs.ERC20s memory) {
         Structs.ERC20s memory cost;
         if (id == ID.ENERGY_INNOVATION) {
             cost.quartz = 800;
