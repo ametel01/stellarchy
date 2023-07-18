@@ -16,7 +16,7 @@ contract LabTest is Test, TestSetup {
         game.energyInnovationUpgrade(); // energy 1
         game.digitalSystemsUpgrade(); // digital 1
         game.beamTechnologyUpgrade(); // beam 1
-        game.combustiveDriveUpgrade(); // combustive 1
+        game.combustionDriveUpgrade(); // combustion 1
         game.labUpgrade(); // lab 2
         game.armourInnovationUpgrade(); // armour 1
         game.thrustPropulsionUpgrade(); // thrust 1
@@ -72,7 +72,7 @@ contract LabTest is Test, TestSetup {
         game.armsDevelopmentUpgrade();
         game.shieldTechUpgrade();
         game.spacetimeWarpUpgrade();
-        game.combustiveDriveUpgrade();
+        game.combustionDriveUpgrade();
         game.thrustPropulsionUpgrade();
         game.warpDriveUpgrade();
     }
