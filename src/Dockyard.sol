@@ -73,7 +73,7 @@ contract Dockyard {
         require(techs.warpDrive >= 4, "Level 4 Warp Drive req");
     }
 
-    function _shipsUnitCost() internal pure returns(S.ShipsCost memory) {
+    function _shipsUnitCost() internal pure returns (S.ShipsCost memory) {
         S.ShipsCost memory costs;
         costs.carrier.steel = 4000;
         costs.carrier.quartz = 4000;
@@ -83,18 +83,17 @@ contract Dockyard {
 
         costs.sparrow.steel = 6000;
         costs.sparrow.quartz = 4000;
-         
-         costs.scraper.steel = 10000;
-         costs.scraper.quartz = 6000;
-         costs.scraper.tritium = 2000;
 
-         costs.frigate.steel = 20000;
-         costs.frigate.quartz = 7000;
-         costs.frigate.tritium = 2000;
+        costs.scraper.steel = 10000;
+        costs.scraper.quartz = 6000;
+        costs.scraper.tritium = 2000;
 
-         costs.armade.steel = 45000;
-         costs.armade.quartz = 15000;
-         return costs;
+        costs.frigate.steel = 20000;
+        costs.frigate.quartz = 7000;
+        costs.frigate.tritium = 2000;
+
+        costs.armade.steel = 45000;
+        costs.armade.quartz = 15000;
+        return costs;
     }
 }
-
