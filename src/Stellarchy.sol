@@ -3,6 +3,7 @@ pragma solidity ^0.8.19 .0;
 
 import {Structs} from "./libraries/Structs.sol";
 import {Compounds} from "./Compounds.sol";
+import {ID} from "./libraries/ID.sol";
 import {Lab} from "./Lab.sol";
 import {Dockyard} from "./Dockyard.sol";
 import {Defences} from "./Defences.sol";
@@ -110,11 +111,10 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         energyInnovationRequirements(labLevel[planetId]);
-        Structs.ERC20s memory cost = getTechCost(
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
             energyInnovationLevel[planetId],
-            0,
-            800,
-            400
+            techsCosts.energyInnovation
         );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
@@ -125,11 +125,10 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         digitalSystemsRequirements(labLevel[planetId]);
-        Structs.ERC20s memory cost = getTechCost(
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
             digitalSystemsLevel[planetId],
-            0,
-            400,
-            600
+            techsCosts.digitalSystems
         );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
@@ -139,44 +138,27 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function beamTechnologyUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         beamTechnologyRequirements(labLevel[planetId], techs);
-        Structs.ERC20s memory cost = getTechCost(
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
             beamTechnologyLevel[planetId],
-            0,
-            800,
-            400
+            techsCosts.beamTechnology
         );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         beamTechnologyLevel[planetId] += 1;
     }
 
-    function armourInnovationUpgrade() external {
-        collectResources();
-        uint256 planetId = _getTokenOwner(msg.sender);
-        armourRequirements(labLevel[planetId]);
-        Structs.ERC20s memory cost = getTechCost(
-            armourInnovationLevel[planetId],
-            1000,
-            0,
-            0
-        );
-        _payResourcesERC20(msg.sender, cost);
-        _updateResourcesSpent(planetId, cost);
-        armourInnovationLevel[planetId] += 1;
-    }
-
     function ionSystemsUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         ionSystemsRequirements(labLevel[planetId], techs);
-        Structs.ERC20s memory cost = getTechCost(
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
             ionSystemsLevel[planetId],
-            1000,
-            300,
-            1000
+            techsCosts.ionSystems
         );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
@@ -186,76 +168,42 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function plasmaEngineeringUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         plasmaEngineeringRequirements(labLevel[planetId], techs);
-        Structs.ERC20s memory cost = getTechCost(
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
             plasmaEngineeringLevel[planetId],
-            2000,
-            4000,
-            1000
+            techsCosts.plasmaEngineering
         );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         plasmaEngineeringLevel[planetId] += 1;
     }
 
-    function armsDevelopmentUpgrade() external {
-        collectResources();
-        uint256 planetId = _getTokenOwner(msg.sender);
-        armsDevelopmentRequirements(labLevel[planetId]);
-        Structs.ERC20s memory cost = getTechCost(
-            armsDevelopmentLevel[planetId],
-            800,
-            200,
-            0
-        );
-        _payResourcesERC20(msg.sender, cost);
-        _updateResourcesSpent(planetId, cost);
-        armsDevelopmentLevel[planetId] += 1;
-    }
-
-    function shieldTechUpgrade() external {
-        collectResources();
-        uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
-        shieldTechRequirements(labLevel[planetId], techs);
-        Structs.ERC20s memory cost = getTechCost(
-            shieldTechLevel[planetId],
-            200,
-            600,
-            0
-        );
-        _payResourcesERC20(msg.sender, cost);
-        _updateResourcesSpent(planetId, cost);
-        shieldTechLevel[planetId] += 1;
-    }
-
     function spacetimeWarpUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         spacetimeWarpRequirements(labLevel[planetId], techs);
-        Structs.ERC20s memory cost = getTechCost(
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
             spacetimeWarpLevel[planetId],
-            0,
-            4000,
-            2000
+            techsCosts.spacetimeWarp
         );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         spacetimeWarpLevel[planetId] += 1;
     }
 
-    function combustiveDriveUpgrade() external {
+    function combustionDriveUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         combustiveDriveRequirements(labLevel[planetId], techs);
-        Structs.ERC20s memory cost = getTechCost(
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
             combustiveDriveLevel[planetId],
-            400,
-            0,
-            600
+            techsCosts.combustiveDrive
         );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
@@ -265,13 +213,12 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function thrustPropulsionUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         thrustPropulsionRequirements(labLevel[planetId], techs);
-        Structs.ERC20s memory cost = getTechCost(
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
             thrustPropulsionLevel[planetId],
-            2000,
-            4000,
-            600
+            techsCosts.thrustPropulsion
         );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
@@ -281,25 +228,67 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function warpDriveUpgrade() external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         warpDriveRequirements(labLevel[planetId], techs);
-        Structs.ERC20s memory cost = getTechCost(
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
             warpDriveLevel[planetId],
-            10000,
-            20000,
-            6000
+            techsCosts.warpDrive
         );
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         warpDriveLevel[planetId] += 1;
     }
 
+    function armourInnovationUpgrade() external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        armourRequirements(labLevel[planetId]);
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
+            armourInnovationLevel[planetId],
+            techsCosts.armourInnovation
+        );
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        armourInnovationLevel[planetId] += 1;
+    }
+
+    function armsDevelopmentUpgrade() external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        armsDevelopmentRequirements(labLevel[planetId]);
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
+            armsDevelopmentLevel[planetId],
+            techsCosts.armsDevelopment
+        );
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        armsDevelopmentLevel[planetId] += 1;
+    }
+
+    function shieldTechUpgrade() external {
+        collectResources();
+        uint256 planetId = _getTokenOwner(msg.sender);
+        Structs.Techs memory techs = getTechsLevels(planetId);
+        shieldTechRequirements(labLevel[planetId], techs);
+        Structs.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
+        Structs.ERC20s memory cost = techUpgradeCost(
+            shieldTechLevel[planetId],
+            techsCosts.shieldTech
+        );
+        _payResourcesERC20(msg.sender, cost);
+        _updateResourcesSpent(planetId, cost);
+        shieldTechLevel[planetId] += 1;
+    }
+
     function carrierBuild(uint amount) external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         carrierRequirements(dockyardLevel[planetId], techs);
-        Structs.ERC20s memory cost = getShipsCost(amount, 0, 2000, 500);
+        Structs.ERC20s memory cost = getShipsCost(amount, 4000, 4000, 0);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         carrierAvailable[planetId] += amount;
@@ -308,7 +297,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function celestiaBuild(uint amount) external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         celestiaRequirements(dockyardLevel[planetId], techs);
         Structs.ERC20s memory cost = getShipsCost(amount, 0, 2000, 500);
         _payResourcesERC20(msg.sender, cost);
@@ -329,7 +318,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function scraperBuild(uint amount) external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         scraperRequirements(dockyardLevel[planetId], techs);
         Structs.ERC20s memory cost = getShipsCost(amount, 10000, 6000, 2000);
         _payResourcesERC20(msg.sender, cost);
@@ -340,7 +329,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function frigateBuild(uint amount) external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         frigateRequirements(dockyardLevel[planetId], techs);
         Structs.ERC20s memory cost = getShipsCost(amount, 20000, 7000, 2000);
         _payResourcesERC20(msg.sender, cost);
@@ -351,7 +340,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function armadeBuild(uint amount) external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         armadeRequirements(dockyardLevel[planetId], techs);
         Structs.ERC20s memory cost = getShipsCost(amount, 45000, 15000, 0);
         _payResourcesERC20(msg.sender, cost);
@@ -372,7 +361,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function beamBuild(uint amount) external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         beamRequirements(dockyardLevel[planetId], techs);
         Structs.ERC20s memory cost = getDefencesCost(amount, 6000, 2000, 0);
         _payResourcesERC20(msg.sender, cost);
@@ -383,7 +372,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function astralLauncherBuild(uint amount) external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         astralLauncherRequirements(dockyardLevel[planetId], techs);
         Structs.ERC20s memory cost = getDefencesCost(
             amount,
@@ -399,7 +388,7 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
     function plasmaProjectorBuild(uint amount) external {
         collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
-        Structs.Techs memory techs = _getTechsLevels(planetId);
+        Structs.Techs memory techs = getTechsLevels(planetId);
         plasmaProjectorRequirements(dockyardLevel[planetId], techs);
         Structs.ERC20s memory cost = getDefencesCost(
             amount,
@@ -442,25 +431,6 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         return resourcesSpent[planetId] / 1000;
     }
 
-    function getCompoundsLevels(
-        uint256 planetId
-    ) public view returns (Structs.Compounds memory levels) {
-        return _compoundsLevels(planetId);
-    }
-
-    function getCompoundsUpgradeCost(
-        uint256 planetId
-    ) external view returns (Structs.CompoundsCost memory cost) {
-        Structs.CompoundsCost memory _cost;
-        _cost.steelMine = _steelMineCost(steelMineLevel[planetId]);
-        _cost.quartzMine = _quartzMineCost(quartzMineLevel[planetId]);
-        _cost.tritiumMine = _tritiumMineCost(tritiumMineLevel[planetId]);
-        _cost.energyPlant = _energyPlantCost(energyPlantLevel[planetId]);
-        _cost.dockyard = _dockyardCost(dockyardLevel[planetId]);
-        _cost.lab = _labCost(labLevel[planetId]);
-        return _cost;
-    }
-
     function getSpendableResources(
         uint256 planetId
     ) external view returns (Structs.ERC20s memory resources) {
@@ -492,13 +462,114 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
 
     function getEnergyAvailable(
         uint256 planetId
-    ) external view returns (int256) {
+    ) external view returns (int256 energy) {
         Structs.Compounds memory mines = getCompoundsLevels(planetId);
         uint256 grossProduction = _energyPlantProduction(
             energyPlantLevel[planetId]
         );
         int256 energyRequired = _calculateEnergyConsumption(mines);
         return int256(grossProduction) - energyRequired;
+    }
+
+    function getCompoundsLevels(
+        uint256 planetId
+    ) public view returns (Structs.Compounds memory levels) {
+        Structs.Compounds memory compounds;
+        compounds.steelMine = steelMineLevel[planetId];
+        compounds.quartzMine = quartzMineLevel[planetId];
+        compounds.tritiumMine = tritiumMineLevel[planetId];
+        compounds.energyPlant = energyPlantLevel[planetId];
+        compounds.dockyard = dockyardLevel[planetId];
+        compounds.lab = labLevel[planetId];
+        return compounds;
+    }
+
+    function getCompoundsUpgradeCost(
+        uint256 planetId
+    ) external view returns (Structs.CompoundsCost memory) {
+        Structs.CompoundsCost memory _cost;
+        _cost.steelMine = _steelMineCost(steelMineLevel[planetId]);
+        _cost.quartzMine = _quartzMineCost(quartzMineLevel[planetId]);
+        _cost.tritiumMine = _tritiumMineCost(tritiumMineLevel[planetId]);
+        _cost.energyPlant = _energyPlantCost(energyPlantLevel[planetId]);
+        _cost.dockyard = _dockyardCost(dockyardLevel[planetId]);
+        _cost.lab = _labCost(labLevel[planetId]);
+        return _cost;
+    }
+
+    function getTechsLevels(
+        uint256 planetId
+    ) public view returns (Structs.Techs memory) {
+        Structs.Techs memory techs;
+        techs.energyInnovation = energyInnovationLevel[planetId];
+        techs.digitalSystems = digitalSystemsLevel[planetId];
+        techs.beamTechnology = beamTechnologyLevel[planetId];
+        techs.armourInnovation = armourInnovationLevel[planetId];
+        techs.ionSystems = ionSystemsLevel[planetId];
+        techs.plasmaEngineering = plasmaEngineeringLevel[planetId];
+        techs.armsDevelopment = armsDevelopmentLevel[planetId];
+        techs.shieldTech = shieldTechLevel[planetId];
+        techs.spacetimeWarp = spacetimeWarpLevel[planetId];
+        techs.combustiveDrive = combustiveDriveLevel[planetId];
+        techs.thrustPropulsion = thrustPropulsionLevel[planetId];
+        techs.warpDrive = warpDriveLevel[planetId];
+        return techs;
+    }
+
+    function getTechsUpgradeCosts(
+        uint256 planetId
+    ) public view returns (Structs.TechsCost memory) {
+        Structs.TechsCost memory cost;
+        Structs.Techs memory techs = getTechsLevels(planetId);
+        cost.energyInnovation = techUpgradeCost(
+            techs.energyInnovation,
+            techCost(ID.ENERGY_INNOVATION)
+        );
+        cost.digitalSystems = techUpgradeCost(
+            techs.digitalSystems,
+            techCost(ID.DIGITAL_SYSTEMS)
+        );
+        cost.beamTechnology = techUpgradeCost(
+            techs.beamTechnology,
+            techCost(ID.BEAM_TECHNOLOGY)
+        );
+        cost.armourInnovation = techUpgradeCost(
+            techs.armourInnovation,
+            techCost(ID.ARMOUR_INNOVATION)
+        );
+        cost.ionSystems = techUpgradeCost(
+            techs.ionSystems,
+            techCost(ID.ION_SYSTEMS)
+        );
+        cost.plasmaEngineering = techUpgradeCost(
+            techs.plasmaEngineering,
+            techCost(ID.PLASMA_ENGINEERING)
+        );
+        cost.armsDevelopment = techUpgradeCost(
+            techs.armsDevelopment,
+            techCost(ID.ARMS_DEVELOPMENT)
+        );
+        cost.shieldTech = techUpgradeCost(
+            techs.shieldTech,
+            techCost(ID.SHIELD_TECH)
+        );
+        cost.spacetimeWarp = techUpgradeCost(
+            techs.spacetimeWarp,
+            techCost(ID.SPACETIME_WARP)
+        );
+        cost.combustiveDrive = techUpgradeCost(
+            techs.combustiveDrive,
+            techCost(ID.COMBUSTIVE_DRIVE)
+        );
+        cost.thrustPropulsion = techUpgradeCost(
+            techs.thrustPropulsion,
+            techCost(ID.THRUST_PROPULSION)
+        );
+        cost.warpDrive = techUpgradeCost(
+            techs.warpDrive,
+            techCost(ID.WARP_DRIVE)
+        );
+        return cost;
     }
 
     function getShipsLevels(
@@ -513,6 +584,8 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         ships.armade = armadeAvailable[planeId];
         return ships;
     }
+
+    // function getShipsCost()
 
     function getDefencesLevels(
         uint256 planeId
@@ -549,19 +622,6 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
         interfaces.quartz = ISTERC20(quartzAddress);
         interfaces.tritium = ISTERC20(tritiumAddress);
         return interfaces;
-    }
-
-    function _compoundsLevels(
-        uint256 planetId
-    ) private view returns (Structs.Compounds memory) {
-        Structs.Compounds memory compounds;
-        compounds.steelMine = steelMineLevel[planetId];
-        compounds.quartzMine = quartzMineLevel[planetId];
-        compounds.tritiumMine = tritiumMineLevel[planetId];
-        compounds.energyPlant = energyPlantLevel[planetId];
-        compounds.dockyard = dockyardLevel[planetId];
-        compounds.lab = labLevel[planetId];
-        return compounds;
     }
 
     function _timeSinceLastCollection(
@@ -637,25 +697,5 @@ contract Stellarchy is Compounds, Lab, Dockyard, Defences {
                     _baseMineConsumption(mines.quartzMine) +
                     _tritiumMineConsumption(mines.tritiumMine)
             );
-    }
-
-    function _getTechsLevels(
-        uint256 planetId
-    ) private view returns (Structs.Techs memory) {
-        Structs.Techs memory techs;
-        techs.energyInnovation = energyInnovationLevel[planetId];
-        techs.digitalSystems = digitalSystemsLevel[planetId];
-        techs.beamTechnology = beamTechnologyLevel[planetId];
-        techs.armourInnovation = armourInnovationLevel[planetId];
-        techs.ionSystems = ionSystemsLevel[planetId];
-        techs.plasmaEngineering = plasmaEngineeringLevel[planetId];
-        techs.stellarPhysics = stellarPhysicsLevel[planetId];
-        techs.armsDevelopment = armsDevelopmentLevel[planetId];
-        techs.shieldTech = shieldTechLevel[planetId];
-        techs.spacetimeWarp = spacetimeWarpLevel[planetId];
-        techs.combustiveDrive = combustiveDriveLevel[planetId];
-        techs.thrustPropulsion = thrustPropulsionLevel[planetId];
-        techs.warpDrive = warpDriveLevel[planetId];
-        return techs;
     }
 }
