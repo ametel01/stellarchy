@@ -15,13 +15,13 @@ contract DockyardTest is TestSetup{
         game.dockyardUpgrade(); // dockyard 1
         game.labUpgrade(); // lab 1
         game.energyInnovationUpgrade(); // energy 1
-        game.combustiveDriveUpgrade(); // combustive 1
+        game.combustionDriveUpgrade(); // combustion 1
         game.celestiaBuild(10);
         Structs.ShipsLevels memory s0 = game.getShipsLevels(1);
         assertEq(s0.celestia, 10);
         
         game.dockyardUpgrade(); // dockyard 2
-        game.combustiveDriveUpgrade(); // combustive 2
+        game.combustionDriveUpgrade(); // combustion 2
         game.carrierBuild(10);
         Structs.ShipsLevels memory s1 = game.getShipsLevels(1);
         assertEq(s1.carrier, 10);
@@ -32,10 +32,10 @@ contract DockyardTest is TestSetup{
         Structs.ShipsLevels memory s2 = game.getShipsLevels(1);
         assertEq(s2.sparrow, 10);
         
-        game.combustiveDriveUpgrade(); // combustive 3
-        game.combustiveDriveUpgrade(); // combustive 4
-        game.combustiveDriveUpgrade(); // combustive 5
-        game.combustiveDriveUpgrade(); // combustive 6
+        game.combustionDriveUpgrade(); // combustion 3
+        game.combustionDriveUpgrade(); // combustion 4
+        game.combustionDriveUpgrade(); // combustion 5
+        game.combustionDriveUpgrade(); // combustion 6
         game.labUpgrade(); // lab 2
         game.labUpgrade(); // lab 3
         game.labUpgrade(); // lab 4
