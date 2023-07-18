@@ -2,6 +2,7 @@
 pragma solidity ^0.8.19 .0;
 
 import {Structs} from "./libraries/Structs.sol";
+import {ID} from "./libraries/ID.sol";
 
 contract Lab {
     mapping(uint256 => uint256) public energyInnovationLevel;
@@ -30,16 +31,14 @@ contract Lab {
 
     mapping(uint256 => uint256) public warpDriveLevel;
 
-    function getTechCost(
+    function techUpgradeCost(
         uint256 currentLevel,
-        uint256 steel,
-        uint256 quartz,
-        uint256 tritium
+        Structs.ERC20s memory cost
     ) public pure returns (Structs.ERC20s memory) {
         Structs.ERC20s memory _cost;
-        _cost.steel = steel * 2 ** currentLevel;
-        _cost.quartz = quartz * 2 ** currentLevel;
-        _cost.tritium = tritium * 2 ** currentLevel;
+        _cost.steel = cost.steel * 2 ** currentLevel;
+        _cost.quartz = cost.quartz * 2 ** currentLevel;
+        _cost.tritium = cost.tritium * 2 ** currentLevel;
         return _cost;
     }
 
@@ -126,5 +125,51 @@ contract Lab {
         require(labLevel >= 7, "Level 7 Lab req");
         require(techs.energyInnovation >= 5, "Level 5 Energy Innovation  req");
         require(techs.spacetimeWarp >= 3, "Level 3 Spacetime Warp req");
+    }
+
+    function techCost(uint id) public pure returns (Structs.ERC20s memory) {
+        Structs.ERC20s memory cost;
+        if (id == ID.ENERGY_INNOVATION) {
+            cost.quartz = 800;
+            cost.tritium = 400;
+        } else if (id == ID.DIGITAL_SYSTEMS) {
+            cost.quartz = 400;
+            cost.tritium = 600;
+        } else if (id == ID.BEAM_TECHNOLOGY) {
+            cost.quartz = 800;
+            cost.tritium = 400;
+        } else if (id == ID.ION_SYSTEMS) {
+            cost.steel = 1000;
+            cost.quartz = 300;
+            cost.tritium = 1000;
+        } else if (id == ID.PLASMA_ENGINEERING) {
+            cost.steel = 2000;
+            cost.quartz = 4000;
+            cost.tritium = 1000;
+        } else if (id == ID.SPACETIME_WARP) {
+            cost.quartz = 4000;
+            cost.tritium = 2000;
+        } else if (id == ID.COMBUSTIVE_DRIVE) {
+            cost.steel = 0;
+            cost.tritium = 600;
+        } else if (id == ID.THRUST_PROPULSION) {
+            cost.steel = 2000;
+            cost.quartz = 4000;
+            cost.tritium = 600;
+        } else if (id == ID.WARP_DRIVE) {
+            cost.steel = 10000;
+            cost.quartz = 2000;
+            cost.tritium = 6000;
+        } else if (id == ID.ARMOUR_INNOVATION) {
+            cost.steel = 1000;
+        } else if (id == ID.ARMS_DEVELOPMENT) {
+            cost.steel = 800;
+            cost.quartz = 200;
+            cost.tritium = 0;
+        } else if (id == ID.SHIELD_TECH) {
+            cost.steel = 200;
+            cost.quartz = 600;
+        }
+        return cost;
     }
 }
