@@ -18,7 +18,7 @@ contract TestSetup is Test {
     Stellarchy internal game;
 
     function setUp() public {
-        erc721 = new STERC721();
+        erc721 = new STERC721("ipfs://QmUA4rfEYVtSKtjgckPFEaZHir5bhFdWZMRcqMQp5wFpvu");
         steel = new STERC20("Stellarchy Steel", "SST");
         quartz = new STERC20("Stellarchy Quartz", "SQZ");
         tritium = new STERC20("Stellarchy Tritium", "STT");
