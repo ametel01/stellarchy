@@ -99,5 +99,46 @@ contract BaseGamesTests is TestSetup {
         assertEq(resources_up.steel, 8011);
         assertEq(resources_up.quartz, 5435);
         assertEq(resources_up.tritium, 2739);
+
+        Structs.TechsCost memory costs1 = game.getTechsUpgradeCosts(1);
+        assertEq(costs1.energyInnovation.quartz, 800);
+        assertEq(costs1.energyInnovation.tritium, 400);
+        
+        assertEq(costs1.digitalSystems.quartz, 400);
+        assertEq(costs1.digitalSystems.tritium, 600);
+        
+        assertEq(costs1.beamTechnology.quartz, 800);
+        assertEq(costs1.beamTechnology.tritium, 400);
+        
+        assertEq(costs1.ionSystems.steel, 1000);
+        assertEq(costs1.ionSystems.quartz, 300);
+        assertEq(costs1.ionSystems.tritium, 1000);
+
+        assertEq(costs1.plasmaEngineering.steel, 2000);
+        assertEq(costs1.plasmaEngineering.quartz, 4000);
+        assertEq(costs1.plasmaEngineering.tritium, 1000);
+
+        assertEq(costs1.spacetimeWarp.quartz, 4000);
+        assertEq(costs1.spacetimeWarp.tritium, 2000);
+
+        assertEq(costs1.combustiveDrive.steel, 400);
+        assertEq(costs1.combustiveDrive.tritium, 600);
+
+        assertEq(costs1.thrustPropulsion.steel, 2000);
+        assertEq(costs1.thrustPropulsion.quartz, 4000);
+        assertEq(costs1.thrustPropulsion.tritium, 600);
+
+        assertEq(costs1.warpDrive.steel, 10000);
+        assertEq(costs1.warpDrive.quartz, 2000);
+        assertEq(costs1.warpDrive.tritium, 6000);
+
+        assertEq(costs1.armourInnovation.steel, 1000);
+
+        assertEq(costs1.armsDevelopment.steel, 800);
+        assertEq(costs1.armsDevelopment.quartz, 200);
+
+        assertEq(costs1.shieldTech.steel, 200);
+        assertEq(costs1.shieldTech.quartz, 600);
+        
     }
 }
