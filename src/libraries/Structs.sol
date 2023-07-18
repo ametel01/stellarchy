@@ -15,16 +15,30 @@ library Structs {
         uint256 energyInnovation;
         uint256 digitalSystems;
         uint256 beamTechnology;
-        uint256 armourInnovation;
         uint256 ionSystems;
         uint256 plasmaEngineering;
-        uint256 stellarPhysics;
-        uint256 armsDevelopment;
-        uint256 shieldTech;
         uint256 spacetimeWarp;
         uint256 combustiveDrive;
         uint256 thrustPropulsion;
         uint256 warpDrive;
+        uint256 armourInnovation;
+        uint256 armsDevelopment;
+        uint256 shieldTech;
+    }
+
+    struct TechsCost {
+        ERC20s energyInnovation;
+        ERC20s digitalSystems;
+        ERC20s beamTechnology;
+        ERC20s ionSystems;
+        ERC20s plasmaEngineering;
+        ERC20s spacetimeWarp;
+        ERC20s combustiveDrive;
+        ERC20s thrustPropulsion;
+        ERC20s warpDrive;
+        ERC20s armourInnovation;
+        ERC20s armsDevelopment;
+        ERC20s shieldTech;
     }
 
     struct ShipsLevels {
