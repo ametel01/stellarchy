@@ -59,6 +59,53 @@ contract TestSetup is Test {
         // ERC20s memory resources = game.getSpendableResources(1); 
         // console.log(resources.steel, resources.quartz, resources.tritium);
         return p1;
-
     }
+
+    function upAllTechs() public {
+        game.labUpgrade(); // lab 1
+        game.energyInnovationUpgrade(); // energy 1
+        game.digitalSystemsUpgrade(); // digital 1
+        game.beamTechnologyUpgrade(); // beam 1
+        game.combustionDriveUpgrade(); // combustion 1
+        game.labUpgrade(); // lab 2
+        game.armourInnovationUpgrade(); // armour 1
+        game.thrustPropulsionUpgrade(); // thrust 1
+        game.labUpgrade(); // lab 3
+        game.labUpgrade(); // lab 4
+        game.armsDevelopmentUpgrade(); // arms 1
+        game.beamTechnologyUpgrade(); // beam 2
+        game.beamTechnologyUpgrade(); // beam 3
+        game.beamTechnologyUpgrade(); // beam 4
+        game.beamTechnologyUpgrade(); // beam 4
+        game.energyInnovationUpgrade(); // energy 2
+        game.energyInnovationUpgrade(); // energy 3
+        game.energyInnovationUpgrade(); // energy 4
+        game.ionSystemsUpgrade(); // ion 1
+        game.energyInnovationUpgrade(); // energy 5
+        game.energyInnovationUpgrade(); // energy 6
+        game.labUpgrade(); // lab 5
+        game.labUpgrade(); // lab 6
+        game.shieldTechUpgrade(); // shield 1
+        game.shieldTechUpgrade(); // shield 2
+        game.shieldTechUpgrade(); // shield 3
+        game.shieldTechUpgrade(); // shield 4
+        game.shieldTechUpgrade(); // shield 5
+        game.labUpgrade(); // lab 7
+        game.spacetimeWarpUpgrade(); // st warp 1
+        game.spacetimeWarpUpgrade(); // st warp 2
+        game.spacetimeWarpUpgrade(); // st warp 3
+        game.spacetimeWarpUpgrade(); // st warp 4
+        game.spacetimeWarpUpgrade(); // st warp 5
+        game.beamTechnologyUpgrade(); // beam 5
+        game.beamTechnologyUpgrade(); // beam 6
+        game.beamTechnologyUpgrade(); // beam 7
+        game.beamTechnologyUpgrade(); // beam 9
+        game.beamTechnologyUpgrade(); // beam 10
+        game.energyInnovationUpgrade(); // energy 6
+        game.energyInnovationUpgrade(); // energy 7
+        game.energyInnovationUpgrade(); // energy 8
+        game.plasmaEngineeringUpgrade(); // plasma 1
+        // game.stellarPhysicsUpgrade(); // stellarphysics 1
+        game.warpDriveUpgrade(); // warpdrive 1
+    } 
 }
