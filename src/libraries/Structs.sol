@@ -66,6 +66,13 @@ library Structs {
         uint256 plasmaProjector;
     }
 
+    struct DefencesCost {
+        ERC20s blaster;
+        ERC20s beam;
+        ERC20s astralLauncher;
+        ERC20s plasmaProjector;
+    }
+
     struct Tokens {
         address erc721;
         address steel;
