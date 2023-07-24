@@ -18,11 +18,15 @@ contract TestSetup is Test {
     Stellarchy internal game;
 
     function setUp() public {
-        erc721 = new STERC721("ipfs://QmUA4rfEYVtSKtjgckPFEaZHir5bhFdWZMRcqMQp5wFpvu");
+        address p1 = vm.addr(0x1);
+        vm.startPrank(p1);
+        
+        erc721 = new STERC721();
         steel = new STERC20("Stellarchy Steel", "SST");
         quartz = new STERC20("Stellarchy Quartz", "SQZ");
         tritium = new STERC20("Stellarchy Tritium", "STT");
-        game = new Stellarchy(
+        game = new Stellarchy();
+        game._initializer(
             address(erc721),
             address(steel),
             address(quartz),
@@ -54,9 +58,9 @@ contract TestSetup is Test {
         game.tritiumMineUpgrade();
         game.tritiumMineUpgrade();
         game.energyPlantUpgrade();
-        vm.warp(ONE_DAY*100000000);
+        vm.warp(ONE_DAY * 100000000);
         game.collectResources();
-        // ERC20s memory resources = game.getSpendableResources(1); 
+        // ERC20s memory resources = game.getSpendableResources(1);
         // console.log(resources.steel, resources.quartz, resources.tritium);
         return p1;
     }
@@ -72,7 +76,7 @@ contract TestSetup is Test {
         game.thrustPropulsionUpgrade(); // thrust 1
         game.labUpgrade(); // lab 3
         game.labUpgrade(); // lab 4
-        game.armsDevelopmentUpgrade(); // arms 1
+        game.weaponsDevelopmentUpgrade(); // arms 1
         game.beamTechnologyUpgrade(); // beam 2
         game.beamTechnologyUpgrade(); // beam 3
         game.beamTechnologyUpgrade(); // beam 4
@@ -107,5 +111,5 @@ contract TestSetup is Test {
         game.plasmaEngineeringUpgrade(); // plasma 1
         // game.stellarPhysicsUpgrade(); // stellarphysics 1
         game.warpDriveUpgrade(); // warpdrive 1
-    } 
+    }
 }

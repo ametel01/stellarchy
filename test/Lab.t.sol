@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19.0;
+pragma solidity ^0.8.19 .0;
 
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
@@ -22,7 +22,7 @@ contract LabTest is Test, TestSetup {
         game.thrustPropulsionUpgrade(); // thrust 1
         game.labUpgrade(); // lab 3
         game.labUpgrade(); // lab 4
-        game.armsDevelopmentUpgrade(); // arms 1
+        game.weaponsDevelopmentUpgrade(); // arms 1
         game.beamTechnologyUpgrade(); // beam 2
         game.beamTechnologyUpgrade(); // beam 3
         game.beamTechnologyUpgrade(); // beam 4
@@ -69,7 +69,7 @@ contract LabTest is Test, TestSetup {
         game.armourInnovationUpgrade();
         game.ionSystemsUpgrade();
         game.plasmaEngineeringUpgrade();
-        game.armsDevelopmentUpgrade();
+        game.weaponsDevelopmentUpgrade();
         game.shieldTechUpgrade();
         game.spacetimeWarpUpgrade();
         game.combustionDriveUpgrade();

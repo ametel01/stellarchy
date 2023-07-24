@@ -9,6 +9,8 @@ import {Structs} from "../src/libraries/Structs.sol";
 import {TestSetup} from "./Setup.t.sol";
 
 contract BaseGamesTests is TestSetup {
+    uint256 constant E18 = 10 ** 18;
+
     function test_Generate() public {
         address p1 = vm.addr(0x1);
         deal(p1, 1 ether);
@@ -18,24 +20,24 @@ contract BaseGamesTests is TestSetup {
         game.generatePlanet{value: 0.01 ether}();
 
         assertEq(erc721.balanceOf(p1), 1);
-        assertEq(steel.balanceOf(p1), 500);
-        assertEq(quartz.balanceOf(p1), 300);
-        assertEq(tritium.balanceOf(p1), 100);
+        assertEq(steel.balanceOf(p1), 500 * E18);
+        assertEq(quartz.balanceOf(p1), 300 * E18);
+        assertEq(tritium.balanceOf(p1), 100 * E18);
 
         vm.startPrank(p2);
         game.generatePlanet{value: 0.01 ether}();
 
         assertEq(erc721.balanceOf(p2), 1);
-        assertEq(steel.balanceOf(p2), 500);
-        assertEq(quartz.balanceOf(p2), 300);
-        assertEq(tritium.balanceOf(p2), 100);
+        assertEq(steel.balanceOf(p2), 500 * E18 );
+        assertEq(quartz.balanceOf(p2), 300 * E18);
+        assertEq(tritium.balanceOf(p2), 100 * E18);
 
         assertEq(game.getNumberOfPlanets(), 2);
     }
 
     function test_Views() public {
         address p1 = vm.addr(0x1);
-        deal(p1, 1 ether);
+        deal(p1, 0.01 ether);
 
         vm.prank(p1);
         game.generatePlanet{value: 0.01 ether}();
@@ -55,7 +57,7 @@ contract BaseGamesTests is TestSetup {
         assertEq(levels.dockyard, 0);
         assertEq(levels.lab, 0);
 
-        Structs.CompoundsCost memory costs = game.getCompoundsUpgradeCost(1);
+        Structs.CompoundsCost memory costs = game.getCompoundsUpgradeCost();
         assertEq(costs.steelMine.steel, 60);
         assertEq(costs.steelMine.quartz, 15);
 
@@ -77,9 +79,9 @@ contract BaseGamesTests is TestSetup {
         assertEq(costs.lab.tritium, 200);
 
         Structs.ERC20s memory resources = game.getSpendableResources(1);
-        assertEq(resources.steel, 500);
-        assertEq(resources.quartz, 300);
-        assertEq(resources.tritium, 100);
+        assertEq(resources.steel, 500 );
+        assertEq(resources.quartz, 300 );
+        assertEq(resources.tritium, 100 );
 
         vm.startPrank(p1);
         game.energyPlantUpgrade();
@@ -87,34 +89,36 @@ contract BaseGamesTests is TestSetup {
         game.quartzMineUpgrade();
         game.tritiumMineUpgrade();
         vm.warp(ONE_DAY * 10);
+        int energy = game.getEnergyAvailable(1);
+        assertEq(energy, -22);
         // game.tritiumMineUpgrade();
         Structs.ERC20s memory collectible = game.getCollectibleResources(1);
-        assertEq(collectible.steel, 7919);
-        assertEq(collectible.quartz, 5279);
-        assertEq(collectible.tritium, 2639);
+        assertEq(collectible.steel, 7887);
+        assertEq(collectible.quartz, 5258);
+        assertEq(collectible.tritium, 2629);
 
         vm.warp(ONE_DAY * 10);
         game.collectResources();
         Structs.ERC20s memory resources_up = game.getSpendableResources(1);
-        assertEq(resources_up.steel, 8011);
-        assertEq(resources_up.quartz, 5435);
-        assertEq(resources_up.tritium, 2739);
+        assertEq(resources_up.steel, 7979 );
+        assertEq(resources_up.quartz, 5414 );
+        assertEq(resources_up.tritium, 2729 );
     }
 
     function test_TechsCost() public {
         address p1 = testSetUp();
         vm.startPrank(p1);
 
-        Structs.TechsCost memory costs1 = game.getTechsUpgradeCosts(1);
+        Structs.TechsCost memory costs1 = game.getTechsUpgradeCosts();
         assertEq(costs1.energyInnovation.quartz, 800);
         assertEq(costs1.energyInnovation.tritium, 400);
-        
+
         assertEq(costs1.digitalSystems.quartz, 400);
         assertEq(costs1.digitalSystems.tritium, 600);
-        
+
         assertEq(costs1.beamTechnology.quartz, 800);
         assertEq(costs1.beamTechnology.tritium, 400);
-        
+
         assertEq(costs1.ionSystems.steel, 1000);
         assertEq(costs1.ionSystems.quartz, 300);
         assertEq(costs1.ionSystems.tritium, 1000);
@@ -146,17 +150,17 @@ contract BaseGamesTests is TestSetup {
         assertEq(costs1.shieldTech.quartz, 600);
 
         upAllTechs();
-        Structs.TechsCost memory costs2 = game.getTechsUpgradeCosts(1);
+        Structs.TechsCost memory costs2 = game.getTechsUpgradeCosts();
 
         assertEq(costs2.energyInnovation.quartz, 409600);
         assertEq(costs2.energyInnovation.tritium, 204800);
-        
+
         assertEq(costs2.digitalSystems.quartz, 800);
         assertEq(costs2.digitalSystems.tritium, 1200);
-        
+
         assertEq(costs2.beamTechnology.quartz, 819200);
         assertEq(costs2.beamTechnology.tritium, 409600);
-        
+
         assertEq(costs2.ionSystems.steel, 2000);
         assertEq(costs2.ionSystems.quartz, 600);
         assertEq(costs2.ionSystems.tritium, 2000);

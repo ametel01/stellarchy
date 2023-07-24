@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19.0;
+pragma solidity ^0.8.19 .0;
 
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
@@ -7,7 +7,9 @@ import "forge-std/Test.sol";
 import {Structs} from "../src/libraries/Structs.sol";
 import {TestSetup} from "./Setup.t.sol";
 
-contract DockyardTest is TestSetup{
+contract DockyardTest is TestSetup {
+    uint256 constant E18 = 10 ** 18;
+
     function test_DockyardUpgrades() public {
         address p1 = testSetUp();
 
@@ -19,19 +21,19 @@ contract DockyardTest is TestSetup{
         game.celestiaBuild(10);
         Structs.ShipsLevels memory s0 = game.getShipsLevels(1);
         assertEq(s0.celestia, 10);
-        
+
         game.dockyardUpgrade(); // dockyard 2
         game.combustionDriveUpgrade(); // combustion 2
         game.carrierBuild(10);
         Structs.ShipsLevels memory s1 = game.getShipsLevels(1);
         assertEq(s1.carrier, 10);
-        
+
         game.dockyardUpgrade(); // dockyard 3
         game.dockyardUpgrade(); // dockyard 4
         game.sparrowBuild(10);
         Structs.ShipsLevels memory s2 = game.getShipsLevels(1);
         assertEq(s2.sparrow, 10);
-        
+
         game.combustionDriveUpgrade(); // combustion 3
         game.combustionDriveUpgrade(); // combustion 4
         game.combustionDriveUpgrade(); // combustion 5
@@ -51,7 +53,7 @@ contract DockyardTest is TestSetup{
         game.scraperBuild(10);
         Structs.ShipsLevels memory s3 = game.getShipsLevels(1);
         assertEq(s3.scraper, 10);
-        
+
         game.dockyardUpgrade(); // dockyard 5
         game.beamTechnologyUpgrade(); // beam 1
         game.beamTechnologyUpgrade(); // beam 2
@@ -84,7 +86,5 @@ contract DockyardTest is TestSetup{
         game.armadeBuild(10);
         Structs.ShipsLevels memory s5 = game.getShipsLevels(1);
         assertEq(s5.armade, 10);
-
-
     }
 }

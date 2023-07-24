@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19.0;
+pragma solidity ^0.8.19 .0;
 
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
 
-import {Compounds} from  "../src/Compounds.sol";
+import {Compounds} from "../src/Compounds.sol";
 import {Structs} from "../src/libraries/Structs.sol";
 import {TestSetup} from "./Setup.t.sol";
 
 contract CompoundsTest is TestSetup, Compounds {
+    uint256 constant E18 = 10 ** 18;
+
     function test_CompoundsUpgrades() public {
         address p1 = vm.addr(0x1);
         deal(p1, 1 ether);
@@ -28,13 +30,43 @@ contract CompoundsTest is TestSetup, Compounds {
         game.tritiumMineUpgrade();
         game.dockyardUpgrade();
         game.labUpgrade();
+        game.getEnergyAvailable(1);
+
         Structs.ERC20s memory resources = game.getSpendableResources(1);
-        assertEq(resources.steel, 6628);
-        assertEq(resources.quartz, 4551);
-        assertEq(resources.tritium, 2439);
+        assertEq(resources.steel, 6596);
+        assertEq(resources.quartz, 4530);
+        assertEq(resources.tritium, 2429);
+        uint points = game.getPlanetPoints(1);
+        assertEq(points, 2);
     }
 
-        function testSteelMineCost() public {
+    function testCollectResources() public {
+        address p1 = vm.addr(0x1);
+        deal(p1, 1 ether);
+        vm.startPrank(p1);
+        game.generatePlanet{value: 0.01 ether}();
+
+        vm.startPrank(p1);
+        game.energyPlantUpgrade();
+        game.steelMineUpgrade();
+        game.quartzMineUpgrade();
+        game.energyPlantUpgrade();
+        // game.tritiumMineUpgrade();
+        int energy = game.getEnergyAvailable(1);
+        console.logInt(energy);
+        vm.warp(ONE_DAY);
+        Structs.ERC20s memory collect = game.getCollectibleResources(1);
+        assertEq(collect.steel, 759);
+        assertEq(collect.quartz, 506);
+        assertEq(collect.tritium, 0);
+        game.collectResources();
+        Structs.ERC20s memory spendable = game.getSpendableResources(1);  
+        assertEq(spendable.steel, 964);
+        assertEq(spendable.quartz, 692);
+        assertEq(spendable.tritium, 100);
+    } 
+
+    function testSteelMineCost() public {
         assertEq(_steelMineCost(0).steel, 60);
         assertEq(_steelMineCost(0).quartz, 15);
         assertEq(_steelMineCost(1).steel, 90);
@@ -80,7 +112,7 @@ contract CompoundsTest is TestSetup, Compounds {
 
     function testSteelProduction() public {
         uint256 s0 = _steelProduction(0);
-        assertEq(s0, 0);
+        assertEq(s0, 10);
         uint256 s1 = _steelProduction(1);
         assertEq(s1, 33);
         uint256 s2 = _steelProduction(5);
@@ -91,7 +123,7 @@ contract CompoundsTest is TestSetup, Compounds {
 
     function testQuartzProduction() public {
         uint256 s0 = _quartzProduction(0);
-        assertEq(s0, 0);
+        assertEq(s0, 10);
         uint256 s1 = _quartzProduction(1);
         assertEq(s1, 22);
         uint256 s2 = _quartzProduction(5);
