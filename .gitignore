@@ -15,3 +15,8 @@ docs/
 
 # Lint
 lint.sh
+package.json
+package-lock.json
+node_modules
+
+.deployments.txt
