@@ -12,17 +12,13 @@ interface ISTERC721 is IERC721 {
 }
 
 contract STERC721 is ERC721, Ownable {
-    string private _baseTokenURI;
+    string public baseTokenURI;
 
     address private _minter;
 
     mapping(address => uint256) private _tokens;
 
-    constructor(
-        string memory baseTokenURI
-    ) ERC721("Stellarchy Planet", "STPL") {
-        _baseTokenURI = baseTokenURI;
-    }
+    constructor() ERC721("Stellarchy Planet", "STPL") {}
 
     function mint(address to, uint256 tokenId) external virtual {
         require(msg.sender == _minter, "caller is not minter");
@@ -35,8 +31,12 @@ contract STERC721 is ERC721, Ownable {
         _minter = minter;
     }
 
+    function setBaseUri(string memory uri) external onlyOwner {
+        baseTokenURI = uri;
+    }
+
     function baseURI() external view virtual returns (string memory) {
-        return _baseTokenURI;
+        return baseTokenURI;
     }
 
     function tokenOf(address account) external view returns (uint256 tokenId) {
