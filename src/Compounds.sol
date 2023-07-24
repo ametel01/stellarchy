@@ -75,12 +75,18 @@ contract Compounds {
     function _steelProduction(
         uint256 currentLevel
     ) internal pure returns (uint256) {
+        if (currentLevel == 0) {
+            return 10;
+        }
         return (30 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
     }
 
     function _quartzProduction(
         uint256 currentLevel
     ) internal pure returns (uint256) {
+        if (currentLevel == 0) {
+            return 10;
+        }
         return (20 * currentLevel * 11 ** currentLevel) / 10 ** currentLevel;
     }
 
