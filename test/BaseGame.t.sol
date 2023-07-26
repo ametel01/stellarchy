@@ -28,7 +28,7 @@ contract BaseGamesTests is TestSetup {
         game.generatePlanet{value: 0.01 ether}();
 
         assertEq(erc721.balanceOf(p2), 1);
-        assertEq(steel.balanceOf(p2), 500 * E18 );
+        assertEq(steel.balanceOf(p2), 500 * E18);
         assertEq(quartz.balanceOf(p2), 300 * E18);
         assertEq(tritium.balanceOf(p2), 100 * E18);
 
@@ -57,7 +57,7 @@ contract BaseGamesTests is TestSetup {
         assertEq(levels.dockyard, 0);
         assertEq(levels.lab, 0);
 
-        Structs.CompoundsCost memory costs = game.getCompoundsUpgradeCost();
+        Structs.CompoundsCost memory costs = game.getCompoundsUpgradeCost(1);
         assertEq(costs.steelMine.steel, 60);
         assertEq(costs.steelMine.quartz, 15);
 
@@ -79,9 +79,9 @@ contract BaseGamesTests is TestSetup {
         assertEq(costs.lab.tritium, 200);
 
         Structs.ERC20s memory resources = game.getSpendableResources(1);
-        assertEq(resources.steel, 500 );
-        assertEq(resources.quartz, 300 );
-        assertEq(resources.tritium, 100 );
+        assertEq(resources.steel, 500);
+        assertEq(resources.quartz, 300);
+        assertEq(resources.tritium, 100);
 
         vm.startPrank(p1);
         game.energyPlantUpgrade();
@@ -89,7 +89,7 @@ contract BaseGamesTests is TestSetup {
         game.quartzMineUpgrade();
         game.tritiumMineUpgrade();
         vm.warp(ONE_DAY * 10);
-        int energy = game.getEnergyAvailable(1);
+        int256 energy = game.getEnergyAvailable(1);
         assertEq(energy, -22);
         // game.tritiumMineUpgrade();
         Structs.ERC20s memory collectible = game.getCollectibleResources(1);
@@ -100,9 +100,9 @@ contract BaseGamesTests is TestSetup {
         vm.warp(ONE_DAY * 10);
         game.collectResources();
         Structs.ERC20s memory resources_up = game.getSpendableResources(1);
-        assertEq(resources_up.steel, 7979 );
-        assertEq(resources_up.quartz, 5414 );
-        assertEq(resources_up.tritium, 2729 );
+        assertEq(resources_up.steel, 7979);
+        assertEq(resources_up.quartz, 5414);
+        assertEq(resources_up.tritium, 2729);
     }
 
     function test_TechsCost() public {

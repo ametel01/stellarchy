@@ -16,10 +16,7 @@ contract Dockyard {
 
     mapping(uint256 => uint256) internal armadeAvailable;
 
-    function shipsCost(
-        uint256 quantity,
-        S.ERC20s memory _cost
-    ) internal pure returns (S.ERC20s memory) {
+    function shipsCost(uint256 quantity, S.ERC20s memory _cost) internal pure returns (S.ERC20s memory) {
         S.ERC20s memory cost;
         cost.steel = _cost.steel * quantity;
         cost.quartz = _cost.quartz * quantity;
@@ -27,26 +24,17 @@ contract Dockyard {
         return (cost);
     }
 
-    function carrierRequirements(
-        uint256 dockyardLevel,
-        S.Techs memory techs
-    ) internal pure {
+    function carrierRequirements(uint256 dockyardLevel, S.Techs memory techs) internal pure {
         require(dockyardLevel >= 2, "Level 2 Dockyard is req");
         require(techs.combustiveDrive >= 2, "Level 2 Combustive Engine req");
     }
 
-    function celestiaRequirements(
-        uint256 dockyardLevel,
-        S.Techs memory techs
-    ) internal pure {
+    function celestiaRequirements(uint256 dockyardLevel, S.Techs memory techs) internal pure {
         require(dockyardLevel >= 1, "Level 1 Dockyard is req");
         require(techs.combustiveDrive >= 1, "Level 1 Combustive Drive req");
     }
 
-    function scraperRequirements(
-        uint256 dockyardLevel,
-        S.Techs memory techs
-    ) internal pure {
+    function scraperRequirements(uint256 dockyardLevel, S.Techs memory techs) internal pure {
         require(dockyardLevel >= 4, "Level 4 Dockyard is req");
         require(techs.combustiveDrive >= 6, "Level 6 Combustive Engine req");
         require(techs.shieldTech >= 2, "Level 2 Shield Tech req");
@@ -56,19 +44,13 @@ contract Dockyard {
         require(dockyardLevel >= 2, "Level 2 Dockyard is req");
     }
 
-    function frigateRequirements(
-        uint256 dockyardLevel,
-        S.Techs memory techs
-    ) internal pure {
+    function frigateRequirements(uint256 dockyardLevel, S.Techs memory techs) internal pure {
         require(dockyardLevel >= 5, "Level 5 Dockyard is req");
         require(techs.ionSystems >= 2, "Level 2 Ion Systems req");
         require(techs.thrustPropulsion >= 4, "Level 4 Thrust prop req");
     }
 
-    function armadeRequirements(
-        uint256 dockyardLevel,
-        S.Techs memory techs
-    ) internal pure {
+    function armadeRequirements(uint256 dockyardLevel, S.Techs memory techs) internal pure {
         require(dockyardLevel >= 7, "Level 7 Dockyard is req");
         require(techs.warpDrive >= 4, "Level 4 Warp Drive req");
     }

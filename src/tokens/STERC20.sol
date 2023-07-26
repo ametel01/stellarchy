@@ -14,10 +14,7 @@ interface ISTERC20 is IERC20 {
 contract STERC20 is ERC20, Ownable {
     address private _minter;
 
-    constructor(
-        string memory _name,
-        string memory _symbol
-    ) ERC20(_name, _symbol) {}
+    constructor(string memory _name, string memory _symbol) ERC20(_name, _symbol) {}
 
     function setMinter(address minter) external virtual onlyOwner {
         _minter = minter;

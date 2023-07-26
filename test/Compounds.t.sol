@@ -36,7 +36,7 @@ contract CompoundsTest is TestSetup, Compounds {
         assertEq(resources.steel, 6596);
         assertEq(resources.quartz, 4530);
         assertEq(resources.tritium, 2429);
-        uint points = game.getPlanetPoints(1);
+        uint256 points = game.getPlanetPoints(1);
         assertEq(points, 2);
     }
 
@@ -52,7 +52,7 @@ contract CompoundsTest is TestSetup, Compounds {
         game.quartzMineUpgrade();
         game.energyPlantUpgrade();
         // game.tritiumMineUpgrade();
-        int energy = game.getEnergyAvailable(1);
+        int256 energy = game.getEnergyAvailable(1);
         console.logInt(energy);
         vm.warp(ONE_DAY);
         Structs.ERC20s memory collect = game.getCollectibleResources(1);
@@ -60,11 +60,11 @@ contract CompoundsTest is TestSetup, Compounds {
         assertEq(collect.quartz, 506);
         assertEq(collect.tritium, 0);
         game.collectResources();
-        Structs.ERC20s memory spendable = game.getSpendableResources(1);  
+        Structs.ERC20s memory spendable = game.getSpendableResources(1);
         assertEq(spendable.steel, 964);
         assertEq(spendable.quartz, 692);
         assertEq(spendable.tritium, 100);
-    } 
+    }
 
     function testSteelMineCost() public {
         assertEq(_steelMineCost(0).steel, 60);

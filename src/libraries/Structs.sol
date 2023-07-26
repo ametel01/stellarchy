@@ -60,7 +60,7 @@ library Structs {
     }
 
     struct DefencesLevels {
-        uint blaster;
+        uint256 blaster;
         uint256 beam;
         uint256 astralLauncher;
         uint256 plasmaProjector;

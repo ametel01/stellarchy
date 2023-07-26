@@ -20,18 +20,13 @@ contract TestSetup is Test {
     function setUp() public {
         address p1 = vm.addr(0x1);
         vm.startPrank(p1);
-        
+
         erc721 = new STERC721();
         steel = new STERC20("Stellarchy Steel", "SST");
         quartz = new STERC20("Stellarchy Quartz", "SQZ");
         tritium = new STERC20("Stellarchy Tritium", "STT");
         game = new Stellarchy();
-        game._initializer(
-            address(erc721),
-            address(steel),
-            address(quartz),
-            address(tritium)
-        );
+        game._initializer(address(erc721), address(steel), address(quartz), address(tritium));
 
         erc721.setMinter(address(game));
         steel.setMinter(address(game));
