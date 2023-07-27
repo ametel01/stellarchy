@@ -93,16 +93,16 @@ contract BaseGamesTests is TestSetup {
         assertEq(energy, -22);
         // game.tritiumMineUpgrade();
         Structs.ERC20s memory collectible = game.getCollectibleResources(1);
-        assertEq(collectible.steel, 7887);
-        assertEq(collectible.quartz, 5258);
-        assertEq(collectible.tritium, 2629);
+        assertEq(collectible.steel, 7919);
+        assertEq(collectible.quartz, 5279);
+        assertEq(collectible.tritium, 2639);
 
         vm.warp(ONE_DAY * 10);
         game.collectResources();
         Structs.ERC20s memory resources_up = game.getSpendableResources(1);
-        assertEq(resources_up.steel, 7979);
-        assertEq(resources_up.quartz, 5414);
-        assertEq(resources_up.tritium, 2729);
+        assertEq(resources_up.steel, 8011);
+        assertEq(resources_up.quartz, 5435);
+        assertEq(resources_up.tritium, 2739);
     }
 
     function test_TechsCost() public {
