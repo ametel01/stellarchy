@@ -384,7 +384,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         _resourcesTimer[planetId] = block.timestamp;
     }
 
-    function getPrizePoll() external view returns (uint) {
+    function getPrizePoll() external view returns (uint256) {
         return address(this).balance / 2;
     }
 
