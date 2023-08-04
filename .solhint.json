@@ -10,5 +10,8 @@
         "constructor-syntax": "warn",
         "max-line-length": ["warn", 80]
     },
-    "plugins": ["prettier"]
+    "plugins": ["prettier"],
+    "rules": {
+        "prettier/prettier": "error"
+    }
 }
