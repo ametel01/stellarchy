@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.19 .0;
 
+import {ReentrancyGuard} from "openzeppelin/security/ReentrancyGuard.sol";
 import {Ownable} from "openzeppelin/access/Ownable.sol";
 import {Structs as S} from "./libraries/Structs.sol";
 import {Compounds} from "./Compounds.sol";
@@ -15,13 +16,15 @@ import {ISTERC721} from "./tokens/STERC721.sol";
 /// @author [ametel01]
 /// @notice This is the main contract for the Stellarchy game.
 /// @dev This contract inherits Ownable, Compounds, Lab, Dockyard, and Defences.
-contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
+contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defences {
     /// @dev A constant for E18, representing 10^18 which is commonly used for decimals in ERC20 tokens.
     uint256 private constant E18 = 10 ** 18;
 
     /// @dev The constant price for something in the contract, specified in Ether.
     /// Note that solidity has a built-in keyword for Ether, so '0.01 ether' will be converted to Wei by the compiler.
     uint256 public constant PRICE = 0.01 ether;
+
+    uint256 public universeStartTime;
 
     /// @dev The address that will receive payments or other transactions. It is payable, so it can receive Ether transactions.
     address payable private _receiver;
@@ -30,7 +33,17 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
     uint256 private numberOfPlanets;
 
     /// @dev A mapping to track the resources spent for each planet. The key is the planet ID and the value is the resources spent.
-    mapping(uint256 => uint256) private resourcesSpent;
+    mapping(uint256 => uint256) public resourcesSpent;
+
+    mapping(uint256 => uint256) public techSpent;
+
+    mapping(uint256 => uint256) public fleetSpent;
+
+    uint256 public pointLeader;
+
+    uint256 public techLeader;
+
+    uint256 public fleetLeader;
 
     /// @dev The contract address of the ERC721 token, which could represent ownership of planets.
     address private erc721Address;
@@ -70,6 +83,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
      */
     constructor() {
         _receiver = payable(msg.sender);
+        universeStartTime = block.timestamp;
     }
 
     /**
@@ -120,7 +134,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
      *
      * @dev Throws if the sending of Ether fails.
      */
-    function withdraw() public {
+    function withdraw() public nonReentrant {
         // get the amount of Ether stored in this contract
         uint256 amount = address(this).balance;
 
@@ -147,13 +161,15 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
      * @dev Emits a Transfer event, as part of the ERC721 token minting process.
      */
     function generatePlanet() external payable {
-        ISTERC721 erc721 = ISTERC721(erc721Address);
-        require(erc721.balanceOf(msg.sender) == 0, "MAX_PLANET_PER_ADDRESS");
-        require(msg.value >= PRICE, "NOT_ENOUGH_ETHER");
-        erc721.mint(msg.sender, numberOfPlanets + 1);
-        numberOfPlanets += 1;
-        _resourcesTimer[numberOfPlanets + 1] = block.timestamp;
-        _mintInitialLiquidity(msg.sender);
+    require(msg.value >= PRICE, "NOT_ENOUGH_ETHER");
+    uint256 currentNumberOfPlanets = numberOfPlanets;
+    ISTERC721 erc721 = ISTERC721(erc721Address);
+    require(erc721.balanceOf(msg.sender) == 0, "MAX_PLANET_PER_ADDRESS");
+    currentNumberOfPlanets += 1;
+    erc721.mint(msg.sender, currentNumberOfPlanets);
+    numberOfPlanets = currentNumberOfPlanets;
+    _resourcesTimer[currentNumberOfPlanets] = block.timestamp;
+    _mintInitialLiquidity(msg.sender);
     }
 
     /// @notice This function allows a user to collect resources.
@@ -179,6 +195,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = _steelMineCost(steelMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         steelMineLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
     }
@@ -201,6 +218,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = _quartzMineCost(quartzMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         quartzMineLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
     }
@@ -223,6 +241,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = _tritiumMineCost(tritiumMineLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         tritiumMineLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
     }
@@ -245,6 +264,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = _energyPlantCost(energyPlantLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         energyPlantLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
     }
@@ -267,6 +287,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = _dockyardCost(dockyardLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         dockyardLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
     }
@@ -289,6 +310,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = _labCost(labLevel[planetId]);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         labLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
     }
@@ -309,10 +331,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         _collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         energyInnovationRequirements(labLevel[planetId]);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(energyInnovationLevel[planetId], techsCosts.energyInnovation);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         energyInnovationLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -334,10 +358,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         _collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         digitalSystemsRequirements(labLevel[planetId]);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(digitalSystemsLevel[planetId], techsCosts.digitalSystems);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         digitalSystemsLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -360,10 +386,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         S.Techs memory techs = getTechsLevels(planetId);
         beamTechnologyRequirements(labLevel[planetId], techs);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(beamTechnologyLevel[planetId], techsCosts.beamTechnology);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         beamTechnologyLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -386,10 +414,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         S.Techs memory techs = getTechsLevels(planetId);
         ionSystemsRequirements(labLevel[planetId], techs);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(ionSystemsLevel[planetId], techsCosts.ionSystems);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         ionSystemsLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -412,10 +442,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         S.Techs memory techs = getTechsLevels(planetId);
         plasmaEngineeringRequirements(labLevel[planetId], techs);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(plasmaEngineeringLevel[planetId], techsCosts.plasmaEngineering);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         plasmaEngineeringLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -438,10 +470,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         S.Techs memory techs = getTechsLevels(planetId);
         spacetimeWarpRequirements(labLevel[planetId], techs);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(spacetimeWarpLevel[planetId], techsCosts.spacetimeWarp);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         spacetimeWarpLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -464,10 +498,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         S.Techs memory techs = getTechsLevels(planetId);
         combustiveDriveRequirements(labLevel[planetId], techs);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(combustiveDriveLevel[planetId], techsCosts.combustiveDrive);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         combustiveDriveLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -490,10 +526,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         S.Techs memory techs = getTechsLevels(planetId);
         thrustPropulsionRequirements(labLevel[planetId], techs);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(thrustPropulsionLevel[planetId], techsCosts.thrustPropulsion);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         thrustPropulsionLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -516,10 +554,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         S.Techs memory techs = getTechsLevels(planetId);
         warpDriveRequirements(labLevel[planetId], techs);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(warpDriveLevel[planetId], techsCosts.warpDrive);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         warpDriveLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -541,10 +581,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         _collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         armourRequirements(labLevel[planetId]);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(armourInnovationLevel[planetId], techsCosts.armourInnovation);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         armourInnovationLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -566,10 +608,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         _collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         armsDevelopmentRequirements(labLevel[planetId]);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(armsDevelopmentLevel[planetId], techsCosts.armsDevelopment);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         armsDevelopmentLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -592,10 +636,12 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         uint256 planetId = _getTokenOwner(msg.sender);
         S.Techs memory techs = getTechsLevels(planetId);
         shieldTechRequirements(labLevel[planetId], techs);
-        S.TechsCost memory techsCosts = getTechsUpgradeCosts();
+        S.TechsCost memory techsCosts = getTechsUpgradeCosts(planetId);
         S.ERC20s memory cost = techUpgradeCost(shieldTechLevel[planetId], techsCosts.shieldTech);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateTechSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         shieldTechLevel[planetId] += 1;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit TechSpent(planetId, cost.steel + cost.quartz);
@@ -624,6 +670,8 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = shipsCost(amount, unitsCost.carrier);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         carrierAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
@@ -652,6 +700,8 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = shipsCost(amount, unitsCost.celestia);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         celestiaAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
@@ -679,6 +729,8 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = shipsCost(amount, unitsCost.sparrow);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         sparrowAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
@@ -707,6 +759,8 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = shipsCost(amount, unitsCost.scraper);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         scraperAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
@@ -735,6 +789,8 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = shipsCost(amount, unitsCost.frigate);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         frigateAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
@@ -763,6 +819,8 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = shipsCost(amount, unitsCost.carrier);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         armadeAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
@@ -790,6 +848,8 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = defencesCost(amount, unitsCost.blaster);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         blasterAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
@@ -819,6 +879,8 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
         beamAvailable[planetId] += amount;
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
     }
@@ -846,6 +908,8 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = defencesCost(amount, unitsCost.astralLauncher);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         astralLauncherAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
@@ -874,27 +938,11 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         S.ERC20s memory cost = defencesCost(amount, unitsCost.plasmaProjector);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        _updateFleetSpent(planetId, cost);
+        _updateLeaderBoard(planetId);
         plasmaAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
-    }
-
-    /**
-     * @notice Collects the pending resources for the planet owned by the message sender.
-     *
-     * @dev This function is a private function that is used to collect resources for a planet owned by the message sender.
-     * It retrieves the amounts of resources that are ready to be collected and then delivers these resources to the sender.
-     * It also updates the resources collection timestamp for the planet.
-     *
-     * @dev This function can only be called internally by other functions in the contract.
-     *
-     * @dev Throws if the sender is not a valid owner of a planet token.
-     */
-    function _collectResources() private {
-        uint256 planetId = _getTokenOwner(msg.sender);
-        S.ERC20s memory amounts = getCollectibleResources(planetId);
-        _recieveResourcesERC20(msg.sender, amounts);
-        _resourcesTimer[planetId] = block.timestamp;
     }
 
     /**
@@ -942,6 +990,10 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         return numberOfPlanets;
     }
 
+    function getLeaderBoard() public view returns (uint256, uint256, uint256) {
+        return(pointLeader, techLeader, fleetLeader);
+    }
+
     /**
      * @notice Retrieves the total points of a specific planet.
      *
@@ -955,6 +1007,11 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
      */
     function getPlanetPoints(uint256 planetId) external view returns (uint256 points) {
         return resourcesSpent[planetId] / 1000;
+    }
+
+    function getLeadersPoints() external view returns(uint256, uint256, uint256) {
+        (uint256 _pointLeader, uint256 _techLeader, uint256 _fleetLeader) = getLeaderBoard();
+        return(resourcesSpent[_pointLeader], techSpent[_techLeader], fleetSpent[_fleetLeader]);
     }
 
     /**
@@ -1066,6 +1123,15 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         return _cost;
     }
 
+    function getEnergyForUpgrade(uint256 planetId) external view returns (S.EnergyCost memory) {
+        S.EnergyCost memory required;
+        S.Compounds memory mines = getCompoundsLevels(planetId);
+        required.steelMine = _baseMineConsumption(mines.steelMine + 1) - _baseMineConsumption(mines.steelMine);
+        required.quartzMine = _baseMineConsumption(mines.quartzMine + 1) - _baseMineConsumption(mines.quartzMine);
+        required.tritiumMine = _tritiumMineConsumption(mines.tritiumMine + 1) - _tritiumMineConsumption(mines.tritiumMine);
+        return required;
+    }
+
     /**
      * @notice Retrieves the current levels of all technology for a given planet.
      *
@@ -1113,9 +1179,7 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
      *
      * @return A `S.TechsCost` struct containing the calculated costs for upgrading technologies.
      */
-    function getTechsUpgradeCosts() public view returns (S.TechsCost memory) {
-        S.Interfaces memory interfaces = _getInterfaces();
-        uint256 planetId = interfaces.erc721.tokenOf(msg.sender);
+    function getTechsUpgradeCosts(uint256 planetId) public view returns (S.TechsCost memory) {
         S.Techs memory techs = getTechsLevels(planetId);
         return _techsCost(techs);
     }
@@ -1182,6 +1246,24 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
      */
     function getDefencesCost() external pure returns (S.DefencesCost memory) {
         return _defencesUnitCost();
+    }
+
+    /**
+     * @notice Collects the pending resources for the planet owned by the message sender.
+     *
+     * @dev This function is a private function that is used to collect resources for a planet owned by the message sender.
+     * It retrieves the amounts of resources that are ready to be collected and then delivers these resources to the sender.
+     * It also updates the resources collection timestamp for the planet.
+     *
+     * @dev This function can only be called internally by other functions in the contract.
+     *
+     * @dev Throws if the sender is not a valid owner of a planet token.
+     */
+    function _collectResources() private {
+        uint256 planetId = _getTokenOwner(msg.sender);
+        S.ERC20s memory amounts = getCollectibleResources(planetId);
+        _recieveResourcesERC20(msg.sender, amounts);
+        _resourcesTimer[planetId] = block.timestamp;
     }
 
     /**
@@ -1317,6 +1399,14 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
         resourcesSpent[planetId] += (cost.steel + cost.quartz);
     }
 
+    function _updateTechSpent(uint256 planetId, S.ERC20s memory cost) private {
+        techSpent[planetId] += (cost.steel + cost.quartz);
+    }
+
+    function _updateFleetSpent(uint256 planetId, S.ERC20s memory cost) private {
+        fleetSpent[planetId] += (cost.steel + cost.quartz);
+    }
+
     /**
      * @notice Calculates the total energy consumption for all the mines owned by a player.
      *
@@ -1330,5 +1420,17 @@ contract Stellarchy is Ownable, Compounds, Lab, Dockyard, Defences {
     function _calculateEnergyConsumption(S.Compounds memory mines) private pure returns (uint256) {
         return _baseMineConsumption(mines.steelMine) + _baseMineConsumption(mines.quartzMine)
             + _tritiumMineConsumption(mines.tritiumMine);
+    }
+
+    function _updateLeaderBoard(uint256 planetId) private {
+        if (resourcesSpent[planetId] > resourcesSpent[pointLeader]) {
+            pointLeader = planetId;
+        }
+        if (techSpent[planetId] > techSpent[techLeader]) {
+            techLeader = planetId;
+        }
+        if (fleetSpent[planetId] > fleetSpent[fleetLeader]) {
+            fleetLeader = planetId;
+        }
     }
 }
