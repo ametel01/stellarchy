@@ -11,6 +11,24 @@ library Structs {
         uint256 tritium;
     }
 
+    struct Compounds {
+        uint256 steelMine;
+        uint256 quartzMine;
+        uint256 tritiumMine;
+        uint256 energyPlant;
+        uint256 dockyard;
+        uint256 lab;
+    }
+
+    struct CompoundsCost {
+        ERC20s steelMine;
+        ERC20s quartzMine;
+        ERC20s tritiumMine;
+        ERC20s energyPlant;
+        ERC20s dockyard;
+        ERC20s lab;
+    }
+
     struct Techs {
         uint256 energyInnovation;
         uint256 digitalSystems;
@@ -80,28 +98,16 @@ library Structs {
         address tritium;
     }
 
-    struct Compounds {
-        uint256 steelMine;
-        uint256 quartzMine;
-        uint256 tritiumMine;
-        uint256 energyPlant;
-        uint256 dockyard;
-        uint256 lab;
-    }
-
-    struct CompoundsCost {
-        ERC20s steelMine;
-        ERC20s quartzMine;
-        ERC20s tritiumMine;
-        ERC20s energyPlant;
-        ERC20s dockyard;
-        ERC20s lab;
-    }
-
     struct Interfaces {
         ISTERC721 erc721;
         ISTERC20 steel;
         ISTERC20 quartz;
         ISTERC20 tritium;
+    }
+
+    struct EnergyCost {
+        uint256 steelMine;
+        uint256 quartzMine;
+        uint256 tritiumMine;
     }
 }
