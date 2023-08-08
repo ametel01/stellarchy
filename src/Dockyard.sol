@@ -63,8 +63,8 @@ contract Dockyard {
         costs.celestia.quartz = 2000;
         costs.celestia.tritium = 500;
 
-        costs.sparrow.steel = 6000;
-        costs.sparrow.quartz = 4000;
+        costs.sparrow.steel = 3000;
+        costs.sparrow.quartz = 1500;
 
         costs.scraper.steel = 10000;
         costs.scraper.quartz = 6000;
