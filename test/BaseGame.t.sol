@@ -109,7 +109,7 @@ contract BaseGamesTests is TestSetup {
         address p1 = testSetUp();
         vm.startPrank(p1);
 
-        Structs.TechsCost memory costs1 = game.getTechsUpgradeCosts();
+        Structs.TechsCost memory costs1 = game.getTechsUpgradeCosts(1);
         assertEq(costs1.energyInnovation.quartz, 800);
         assertEq(costs1.energyInnovation.tritium, 400);
 
@@ -150,7 +150,7 @@ contract BaseGamesTests is TestSetup {
         assertEq(costs1.shieldTech.quartz, 600);
 
         upAllTechs();
-        Structs.TechsCost memory costs2 = game.getTechsUpgradeCosts();
+        Structs.TechsCost memory costs2 = game.getTechsUpgradeCosts(1);
 
         assertEq(costs2.energyInnovation.quartz, 409600);
         assertEq(costs2.energyInnovation.tritium, 204800);
