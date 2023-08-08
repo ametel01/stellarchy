@@ -20,6 +20,23 @@ contract STERC721 is ERC721, Ownable {
 
     constructor() ERC721("Stellarchy Planet", "STPL") {}
 
+    function transferFrom(address from, address to, uint256 tokenId) public virtual override(ERC721) {
+        //solhint-disable-next-line max-line-length
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
+        require(balanceOf(to) == 0, "Max planets per account is 1");
+        _transfer(from, to, tokenId);
+    }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)
+        public
+        virtual
+        override(ERC721)
+    {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
+        require(balanceOf(to) == 0, "Max planets per account is 1");
+        _safeTransfer(from, to, tokenId, data);
+    }
+
     function mint(address to, uint256 tokenId) external virtual {
         require(msg.sender == _minter, "caller is not minter");
         require(balanceOf(to) == 0, "max planets per address is 1");
