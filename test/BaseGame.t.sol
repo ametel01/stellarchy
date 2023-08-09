@@ -16,7 +16,7 @@ contract BaseGamesTests is TestSetup {
         deal(p1, 1 ether);
         address p2 = vm.addr(0x2);
         deal(p2, 1 ether);
-        vm.prank(p1);
+        vm.startPrank(p1);
         game.generatePlanet{value: 0.01 ether}();
 
         assertEq(erc721.balanceOf(p1), 1);
@@ -39,7 +39,7 @@ contract BaseGamesTests is TestSetup {
         address p1 = vm.addr(0x1);
         deal(p1, 0.01 ether);
 
-        vm.prank(p1);
+        vm.startPrank(p1);
         game.generatePlanet{value: 0.01 ether}();
 
         assertEq(game.getNumberOfPlanets(), 1);

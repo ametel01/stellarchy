@@ -14,7 +14,7 @@ contract CompoundsTest is TestSetup, Compounds {
     function test_CompoundsUpgrades() public {
         address p1 = vm.addr(0x1);
         deal(p1, 1 ether);
-        vm.prank(p1);
+        vm.startPrank(p1);
         game.generatePlanet{value: 0.01 ether}();
 
         vm.startPrank(p1);
