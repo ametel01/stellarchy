@@ -37,11 +37,11 @@ contract DockyardTest is TestSetup {
         game.energyInnovationUpgrade(); // energy 5
         game.energyInnovationUpgrade(); // energy 6
         game.labUpgrade(); // lab 2
-        game.armourInnovationUpgrade(); // armour 1
-        game.armourInnovationUpgrade(); // armour 2
-        game.armourInnovationUpgrade(); // armour 3
         game.labUpgrade(); // lab 3
         game.labUpgrade(); // lab 4
+        game.weaponsDevelopmentUpgrade(); // armour 1
+        game.weaponsDevelopmentUpgrade(); // armour 2
+        game.weaponsDevelopmentUpgrade(); // armour 3
         game.labUpgrade(); // lab 5
         game.labUpgrade(); // lab 6
         game.shieldTechUpgrade(); // shield 1
