@@ -20,3 +20,5 @@ package-lock.json
 node_modules
 
 .deployments.txt
+gas_after.txt
+gas_before.txt
