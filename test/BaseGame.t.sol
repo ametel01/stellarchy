@@ -42,12 +42,6 @@ contract BaseGamesTests is TestSetup {
         vm.prank(p1);
         game.generatePlanet{value: 0.01 ether}();
 
-        Structs.Tokens memory tokens = game.getTokenAddresses();
-        assertEq(tokens.erc721, address(erc721));
-        assertEq(tokens.steel, address(steel));
-        assertEq(tokens.quartz, address(quartz));
-        assertEq(tokens.tritium, address(tritium));
-
         assertEq(game.getNumberOfPlanets(), 1);
 
         Structs.Compounds memory levels = game.getCompoundsLevels(1);

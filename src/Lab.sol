@@ -32,10 +32,13 @@ contract Lab {
     mapping(uint256 => uint256) internal warpDriveLevel;
 
     function techUpgradeCost(uint256 currentLevel, S.ERC20s memory cost) internal pure returns (S.ERC20s memory) {
+        uint256 multiplier = 1 << currentLevel; // equivalent to 2 ** currentLevel
+
         S.ERC20s memory _cost;
-        _cost.steel = cost.steel * 2 ** currentLevel;
-        _cost.quartz = cost.quartz * 2 ** currentLevel;
-        _cost.tritium = cost.tritium * 2 ** currentLevel;
+        _cost.steel = cost.steel * multiplier;
+        _cost.quartz = cost.quartz * multiplier;
+        _cost.tritium = cost.tritium * multiplier;
+
         return _cost;
     }
 

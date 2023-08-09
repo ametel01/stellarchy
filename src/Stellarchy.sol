@@ -20,6 +20,15 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
     /// @dev A constant for E18, representing 10^18 which is commonly used for decimals in ERC20 tokens.
     uint256 private constant E18 = 10 ** 18;
 
+    uint256 private constant STEEL_AMOUNT = 500 * 1e18;
+    uint256 private constant QUARTZ_AMOUNT = 300 * 1e18;
+    uint256 private constant TRITIUM_AMOUNT = 100 * 1e18;
+
+    ISTERC721 public erc721;
+    ISTERC20 public steel;
+    ISTERC20 public quartz;
+    ISTERC20 public tritium;
+
     /// @dev The constant price for something in the contract, specified in Ether.
     /// Note that solidity has a built-in keyword for Ether, so '0.01 ether' will be converted to Wei by the compiler.
     uint256 public constant PRICE = 0.01 ether;
@@ -44,18 +53,6 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
     uint256 public techLeader;
 
     uint256 public fleetLeader;
-
-    /// @dev The contract address of the ERC721 token, which could represent ownership of planets.
-    address private erc721Address;
-
-    /// @dev Contract address of the "steel" resource token. Likely an ERC20 token.
-    address private steelAddress;
-
-    /// @dev Contract address of the "quartz" resource token. Likely an ERC20 token.
-    address private quartzAddress;
-
-    /// @dev Contract address of the "tritium" resource token. Likely an ERC20 token.
-    address private tritiumAddress;
 
     /// @dev A mapping to track the resource timers for each planet. The key is the planet ID and the value is the timer (likely in seconds since Unix Epoch).
     mapping(uint256 => uint256) private _resourcesTimer;
@@ -99,25 +96,16 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      */
     receive() external payable {}
 
-    /**
-     * @notice Initializes the addresses for the ERC721 contract and the ERC20 contracts for steel, quartz, and tritium.
-     *
-     * @dev This is an internal function, meaning it can only be called from within the contract itself or contracts deriving from it.
-     *
-     * @dev This function can only be called by the contract owner.
-     *
-     * @dev The addresses provided must be the addresses of contracts that adhere to the ERC721 and ERC20 standards.
-     *
-     * @param erc721 The address of the deployed ERC721 contract.
-     * @param steel The address of the deployed ERC20 contract for steel.
-     * @param quartz The address of the deployed ERC20 contract for quartz.
-     * @param tritium The address of the deployed ERC20 contract for tritium.
-     */
-    function _initializer(address erc721, address steel, address quartz, address tritium) external onlyOwner {
-        erc721Address = erc721;
-        steelAddress = steel;
-        quartzAddress = quartz;
-        tritiumAddress = tritium;
+    function _initializer(
+        address _erc721Address,
+        address _steelAddress,
+        address _quartzAddress,
+        address _tritiumAddress
+    ) external onlyOwner {
+        erc721 = ISTERC721(_erc721Address);
+        steel = ISTERC20(_steelAddress);
+        quartz = ISTERC20(_quartzAddress);
+        tritium = ISTERC20(_tritiumAddress);
     }
 
     /**
@@ -161,15 +149,14 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      * @dev Emits a Transfer event, as part of the ERC721 token minting process.
      */
     function generatePlanet() external payable {
-    require(msg.value >= PRICE, "NOT_ENOUGH_ETHER");
-    uint256 currentNumberOfPlanets = numberOfPlanets;
-    ISTERC721 erc721 = ISTERC721(erc721Address);
-    require(erc721.balanceOf(msg.sender) == 0, "MAX_PLANET_PER_ADDRESS");
-    currentNumberOfPlanets += 1;
-    erc721.mint(msg.sender, currentNumberOfPlanets);
-    numberOfPlanets = currentNumberOfPlanets;
-    _resourcesTimer[currentNumberOfPlanets] = block.timestamp;
-    _mintInitialLiquidity(msg.sender);
+        require(msg.value >= PRICE, "NOT_ENOUGH_ETHER");
+        uint256 currentNumberOfPlanets = numberOfPlanets;
+        require(erc721.balanceOf(msg.sender) == 0, "MAX_PLANET_PER_ADDRESS");
+        currentNumberOfPlanets += 1;
+        erc721.mint(msg.sender, currentNumberOfPlanets);
+        numberOfPlanets = currentNumberOfPlanets;
+        _resourcesTimer[currentNumberOfPlanets] = block.timestamp;
+        _mintInitialLiquidity(msg.sender);
     }
 
     /// @notice This function allows a user to collect resources.
@@ -191,13 +178,19 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      */
     function steelMineUpgrade() external {
         _collectResources();
+
         uint256 planetId = _getTokenOwner(msg.sender);
-        S.ERC20s memory cost = _steelMineCost(steelMineLevel[planetId]);
+        uint256 currentLevel = steelMineLevel[planetId];
+        S.ERC20s memory cost = _steelMineCost(currentLevel);
+
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+
         _updateLeaderBoard(planetId);
-        steelMineLevel[planetId] += 1;
-        emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
+        steelMineLevel[planetId] = currentLevel + 1;
+
+        uint256 totalResourcesSpent = cost.steel + cost.quartz;
+        emit TotalResourcesSpent(planetId, totalResourcesSpent);
     }
 
     /**
@@ -841,16 +834,16 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      * @param amount The number of defence units to construct.
      */
     function blasterBuild(uint32 amount) external {
-        _collectResources();
+       _collectResources();
         uint256 planetId = _getTokenOwner(msg.sender);
         blasterRequirements(dockyardLevel[planetId]);
         S.DefencesCost memory unitsCost = _defencesUnitCost();
         S.ERC20s memory cost = defencesCost(amount, unitsCost.blaster);
         _payResourcesERC20(msg.sender, cost);
         _updateResourcesSpent(planetId, cost);
+        blasterAvailable[planetId] += amount;
         _updateFleetSpent(planetId, cost);
         _updateLeaderBoard(planetId);
-        blasterAvailable[planetId] += amount;
         emit TotalResourcesSpent(planetId, cost.steel + cost.quartz);
         emit FleetSpent(planetId, cost.steel + cost.quartz);
     }
@@ -959,27 +952,6 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
     }
 
     /**
-     * @notice Retrieves the addresses of all associated tokens in the system.
-     *
-     * @dev This function returns the current addresses for the ERC721 token and the other
-     * ERC20 tokens, namely steel, quartz, and tritium.
-     *
-     * @return tokens - A structure containing all four token addresses:
-     *     erc721: The address of the ERC721 token.
-     *     steel: The address of the steel token.
-     *     quartz: The address of the quartz token.
-     *     tritium: The address of the tritium token.
-     */
-    function getTokenAddresses() external view returns (S.Tokens memory tokens) {
-        S.Tokens memory _tokens;
-        _tokens.erc721 = erc721Address;
-        _tokens.steel = steelAddress;
-        _tokens.quartz = quartzAddress;
-        _tokens.tritium = tritiumAddress;
-        return _tokens;
-    }
-
-    /**
      * @notice Get the total number of planets in the system.
      *
      * @dev This is a view function and it doesn't alter the state of the blockchain.
@@ -991,7 +963,7 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
     }
 
     function getLeaderBoard() public view returns (uint256, uint256, uint256) {
-        return(pointLeader, techLeader, fleetLeader);
+        return (pointLeader, techLeader, fleetLeader);
     }
 
     /**
@@ -1009,9 +981,9 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
         return resourcesSpent[planetId] / 1000;
     }
 
-    function getLeadersPoints() external view returns(uint256, uint256, uint256) {
+    function getLeadersPoints() external view returns (uint256, uint256, uint256) {
         (uint256 _pointLeader, uint256 _techLeader, uint256 _fleetLeader) = getLeaderBoard();
-        return(resourcesSpent[_pointLeader], techSpent[_techLeader], fleetSpent[_fleetLeader]);
+        return (resourcesSpent[_pointLeader], techSpent[_techLeader], fleetSpent[_fleetLeader]);
     }
 
     /**
@@ -1026,12 +998,11 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      * @dev This function can only be called externally and is view-only, i.e., it does not alter the state.
      */
     function getSpendableResources(uint256 planetId) external view returns (S.ERC20s memory) {
-        S.Interfaces memory interfaces = _getInterfaces();
-        address planetOwner = interfaces.erc721.ownerOf(planetId);
+        address planetOwner = erc721.ownerOf(planetId);
         S.ERC20s memory amounts;
-        amounts.steel = (interfaces.steel.balanceOf(planetOwner) / E18);
-        amounts.quartz = (interfaces.quartz.balanceOf(planetOwner) / E18);
-        amounts.tritium = (interfaces.tritium.balanceOf(planetOwner) / E18);
+        amounts.steel = (steel.balanceOf(planetOwner) / E18);
+        amounts.quartz = (quartz.balanceOf(planetOwner) / E18);
+        amounts.tritium = (tritium.balanceOf(planetOwner) / E18);
         return amounts;
     }
 
@@ -1126,9 +1097,19 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
     function getEnergyForUpgrade(uint256 planetId) external view returns (S.EnergyCost memory) {
         S.EnergyCost memory required;
         S.Compounds memory mines = getCompoundsLevels(planetId);
-        required.steelMine = _baseMineConsumption(mines.steelMine + 1) - _baseMineConsumption(mines.steelMine);
-        required.quartzMine = _baseMineConsumption(mines.quartzMine + 1) - _baseMineConsumption(mines.quartzMine);
-        required.tritiumMine = _tritiumMineConsumption(mines.tritiumMine + 1) - _tritiumMineConsumption(mines.tritiumMine);
+
+        uint256 currentSteelConsumption = _baseMineConsumption(mines.steelMine);
+        uint256 nextSteelConsumption = _baseMineConsumption(mines.steelMine + 1);
+        required.steelMine = nextSteelConsumption - currentSteelConsumption;
+
+        uint256 currentQuartzConsumption = _baseMineConsumption(mines.quartzMine);
+        uint256 nextQuartzConsumption = _baseMineConsumption(mines.quartzMine + 1);
+        required.quartzMine = nextQuartzConsumption - currentQuartzConsumption;
+
+        uint256 currentTritiumConsumption = _tritiumMineConsumption(mines.tritiumMine);
+        uint256 nextTritiumConsumption = _tritiumMineConsumption(mines.tritiumMine + 1);
+        required.tritiumMine = nextTritiumConsumption - currentTritiumConsumption;
+
         return required;
     }
 
@@ -1194,14 +1175,14 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      * @return ships An `S.ShipsLevels` struct containing the levels of each type of ship available for the specified planet.
      */
     function getShipsLevels(uint256 planetId) external view returns (S.ShipsLevels memory) {
-        S.ShipsLevels memory ships;
-        ships.carrier = carrierAvailable[planetId];
-        ships.celestia = celestiaAvailable[planetId];
-        ships.scraper = scraperAvailable[planetId];
-        ships.sparrow = sparrowAvailable[planetId];
-        ships.frigate = frigateAvailable[planetId];
-        ships.armade = armadeAvailable[planetId];
-        return ships;
+        return S.ShipsLevels(
+            carrierAvailable[planetId],
+            celestiaAvailable[planetId],
+            scraperAvailable[planetId],
+            sparrowAvailable[planetId],
+            frigateAvailable[planetId],
+            armadeAvailable[planetId]
+        );
     }
 
     /**
@@ -1261,8 +1242,7 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      */
     function _collectResources() private {
         uint256 planetId = _getTokenOwner(msg.sender);
-        S.ERC20s memory amounts = getCollectibleResources(planetId);
-        _recieveResourcesERC20(msg.sender, amounts);
+        _recieveResourcesERC20(msg.sender, getCollectibleResources(planetId));
         _resourcesTimer[planetId] = block.timestamp;
     }
 
@@ -1279,25 +1259,7 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      * @return The ID of the token owned by the account.
      */
     function _getTokenOwner(address account) private view returns (uint256) {
-        ISTERC721 erc721 = ISTERC721(erc721Address);
         return erc721.tokenOf(account);
-    }
-
-    /**
-     * @notice This is a private view function that retrieves the interface instances for
-     * the ERC721 token, and the steel, quartz, and tritium ERC20 tokens.
-     *
-     * @dev The token addresses must be already set before calling this function.
-     *
-     * @return interfaces An `S.Interfaces` struct containing the initialized interfaces.
-     */
-    function _getInterfaces() private view returns (S.Interfaces memory) {
-        S.Interfaces memory interfaces;
-        interfaces.erc721 = ISTERC721(erc721Address);
-        interfaces.steel = ISTERC20(steelAddress);
-        interfaces.quartz = ISTERC20(quartzAddress);
-        interfaces.tritium = ISTERC20(tritiumAddress);
-        return interfaces;
     }
 
     /**
@@ -1326,10 +1288,9 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      * representations in wei, given that Ethereum's native currency (and many ERC20 tokens) have 18 decimal places.
      */
     function _mintInitialLiquidity(address caller) private {
-        S.Interfaces memory interfaces = _getInterfaces();
-        interfaces.steel.mint(caller, 500 * E18);
-        interfaces.quartz.mint(caller, 300 * E18);
-        interfaces.tritium.mint(caller, 100 * E18);
+        steel.mint(caller, STEEL_AMOUNT);
+        quartz.mint(caller, QUARTZ_AMOUNT);
+        tritium.mint(caller, TRITIUM_AMOUNT);
     }
 
     /**
@@ -1345,15 +1306,14 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      * If the amounts are nonzero, the function calls the mint function of the respective contract.
      */
     function _recieveResourcesERC20(address caller, S.ERC20s memory amounts) private {
-        S.Interfaces memory interfaces = _getInterfaces();
         if (amounts.steel > 0) {
-            interfaces.steel.mint(caller, amounts.steel * E18);
+            steel.mint(caller, amounts.steel * E18);
         }
         if (amounts.quartz > 0) {
-            interfaces.quartz.mint(caller, amounts.quartz * E18);
+            quartz.mint(caller, amounts.quartz * E18);
         }
         if (amounts.tritium > 0) {
-            interfaces.tritium.mint(caller, amounts.tritium * E18);
+            tritium.mint(caller, amounts.tritium * E18);
         }
     }
 
@@ -1368,18 +1328,17 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
      * @dev Throws if the caller does not have enough of the specified resource.
      */
     function _payResourcesERC20(address caller, S.ERC20s memory amounts) private {
-        S.Interfaces memory interfaces = _getInterfaces();
         if (amounts.steel > 0) {
-            require(interfaces.steel.balanceOf(caller) >= amounts.steel, "NOT_ENOUGH_STEEL");
-            interfaces.steel.burn(caller, amounts.steel * E18);
+            require(steel.balanceOf(caller) >= amounts.steel, "NOT_ENOUGH_STEEL");
+            steel.burn(caller, amounts.steel * E18);
         }
         if (amounts.quartz > 0) {
-            require(interfaces.quartz.balanceOf(caller) >= amounts.quartz, "NOT_ENOUGH_QUARTZ");
-            interfaces.quartz.burn(caller, amounts.quartz * E18);
+            require(quartz.balanceOf(caller) >= amounts.quartz, "NOT_ENOUGH_QUARTZ");
+            quartz.burn(caller, amounts.quartz * E18);
         }
         if (amounts.tritium > 0) {
-            require(interfaces.tritium.balanceOf(caller) >= amounts.tritium, "NOT_ENOUGH_TRITIUM");
-            interfaces.tritium.burn(caller, amounts.tritium * E18);
+            require(tritium.balanceOf(caller) >= amounts.tritium, "NOT_ENOUGH_TRITIUM");
+            tritium.burn(caller, amounts.tritium * E18);
         }
     }
 
@@ -1423,13 +1382,17 @@ contract Stellarchy is ReentrancyGuard, Ownable, Compounds, Lab, Dockyard, Defen
     }
 
     function _updateLeaderBoard(uint256 planetId) private {
-        if (resourcesSpent[planetId] > resourcesSpent[pointLeader]) {
+        uint256 planetResourcesSpent = resourcesSpent[planetId];
+        uint256 planetTechSpent = techSpent[planetId];
+        uint256 planetFleetSpent = fleetSpent[planetId];
+
+        if (planetResourcesSpent > resourcesSpent[pointLeader]) {
             pointLeader = planetId;
         }
-        if (techSpent[planetId] > techSpent[techLeader]) {
+        if (planetTechSpent > techSpent[techLeader]) {
             techLeader = planetId;
         }
-        if (fleetSpent[planetId] > fleetSpent[fleetLeader]) {
+        if (planetFleetSpent > fleetSpent[fleetLeader]) {
             fleetLeader = planetId;
         }
     }

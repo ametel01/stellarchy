@@ -1,0 +1,122 @@
+Compiling 7 files with 0.8.20
+Solc 0.8.20 finished in 3.61s
+Compiler run [32msuccessful![0m
+
+Running 16 tests for test/Compounds.t.sol:CompoundsTest
+[32m[PASS][0m testBeseConsumption() (gas: 3836)
+[32m[PASS][0m testCollectResources() (gas: 551044)
+[32m[PASS][0m testDockyardCost() (gas: 5472)
+[32m[PASS][0m testEnergyPlantMineCost() (gas: 13768)
+[32m[PASS][0m testEnergyPlantProduction() (gas: 3816)
+[32m[PASS][0m testLabCost() (gas: 5449)
+[32m[PASS][0m testProductionScaler() (gas: 1763)
+[32m[PASS][0m testQuartzMineCost() (gas: 13725)
+[32m[PASS][0m testQuartzProduction() (gas: 3381)
+[32m[PASS][0m testSetUp():(address) (gas: 716229)
+[32m[PASS][0m testSteelMineCost() (gas: 13767)
+[32m[PASS][0m testSteelProduction() (gas: 3426)
+[32m[PASS][0m testTritiumConsumption() (gas: 3838)
+[32m[PASS][0m testTritiumMineCost() (gas: 13767)
+[32m[PASS][0m testTritiumProduction() (gas: 3770)
+[32m[PASS][0m test_CompoundsUpgrades() (gas: 771505)
+Test result: [32mok[0m. 16 passed; 0 failed; 0 skipped; finished in 4.75ms
+
+Running 1 test for test/Setup.t.sol:TestSetup
+[32m[PASS][0m testSetUp():(address) (gas: 715976)
+Test result: [32mok[0m. 1 passed; 0 failed; 0 skipped; finished in 5.97ms
+
+Running 3 tests for test/Lab.t.sol:LabTest
+[32m[PASS][0m testFail_Upgrade() (gas: 726409)
+[32m[PASS][0m testSetUp():(address) (gas: 715976)
+[32m[PASS][0m test_Upgrade() (gas: 2911119)
+Test result: [32mok[0m. 3 passed; 0 failed; 0 skipped; finished in 13.24ms
+
+Running 2 tests for test/Dockyard.t.sol:DockyardTest
+[32m[PASS][0m testSetUp():(address) (gas: 716207)
+[32m[PASS][0m test_DockyardUpgrades() (gas: 3370119)
+Test result: [32mok[0m. 2 passed; 0 failed; 0 skipped; finished in 13.29ms
+
+Running 4 tests for test/BaseGame.t.sol:BaseGamesTests
+[32m[PASS][0m testSetUp():(address) (gas: 716207)
+[32m[PASS][0m test_Generate() (gas: 498097)
+[32m[PASS][0m test_TechsCost() (gas: 2963149)
+[32m[PASS][0m test_Views() (gas: 595487)
+Test result: [32mok[0m. 4 passed; 0 failed; 0 skipped; finished in 14.50ms
+
+Running 2 tests for test/Defences.t.sol:DockyardTest
+[32m[PASS][0m testSetUp():(address) (gas: 716207)
+[32m[PASS][0m test_DockyardUpgrades() (gas: 3346730)
+Test result: [32mok[0m. 2 passed; 0 failed; 0 skipped; finished in 14.77ms
+| src/Stellarchy.sol:Stellarchy contract |                 |        |        |        |         |
+|----------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                        | Deployment Size |        |        |        |         |
+| 4627176                                | 22819           |        |        |        |         |
+| Function Name                          | min             | avg    | median | max    | # calls |
+| _initializer                           | 89391           | 89391  | 89391  | 89391  | 28      |
+| armadeBuild                            | 47968           | 47968  | 47968  | 47968  | 1       |
+| armourInnovationUpgrade                | 57591           | 57591  | 57591  | 57591  | 2       |
+| astralLauncherBuild                    | 47649           | 47649  | 47649  | 47649  | 1       |
+| beamBuild                              | 47652           | 47652  | 47652  | 47652  | 1       |
+| beamTechnologyUpgrade                  | 45318           | 47592  | 45318  | 65218  | 35      |
+| blasterBuild                           | 80467           | 80467  | 80467  | 80467  | 1       |
+| carrierBuild                           | 48014           | 48014  | 48014  | 48014  | 1       |
+| celestiaBuild                          | 89925           | 89925  | 89925  | 89925  | 1       |
+| collectResources                       | 12964           | 16705  | 17017  | 17017  | 13      |
+| combustionDriveUpgrade                 | 45307           | 52769  | 45307  | 65207  | 8       |
+| digitalSystemsUpgrade                  | 62460           | 62460  | 62460  | 62460  | 2       |
+| dockyardUpgrade                        | 26974           | 31024  | 26974  | 48574  | 16      |
+| energyInnovationUpgrade                | 9585            | 51049  | 42619  | 126428 | 33      |
+| energyPlantUpgrade                     | 22339           | 45805  | 22745  | 105560 | 50      |
+| frigateBuild                           | 52859           | 52859  | 52859  | 52859  | 1       |
+| generatePlanet                         | 170700          | 277200 | 284300 | 284300 | 16      |
+| getCollectibleResources                | 4423            | 4626   | 4626   | 4829   | 2       |
+| getCompoundsLevels                     | 13927           | 13927  | 13927  | 13927  | 1       |
+| getCompoundsUpgradeCost                | 9308            | 9308   | 9308   | 9308   | 1       |
+| getDefencesLevels                      | 1470            | 2970   | 1470   | 7470   | 4       |
+| getEnergyAvailable                     | 8416            | 9614   | 8416   | 12010  | 3       |
+| getNumberOfPlanets                     | 382             | 382    | 382    | 382    | 2       |
+| getPlanetPoints                        | 587             | 587    | 587    | 587    | 1       |
+| getShipsLevels                         | 1863            | 3529   | 1863   | 11863  | 6       |
+| getSpendableResources                  | 5381            | 5381   | 5381   | 5381   | 4       |
+| getTechsUpgradeCosts                   | 20332           | 32332  | 32332  | 44332  | 2       |
+| ionSystemsUpgrade                      | 50252           | 65177  | 70152  | 70152  | 4       |
+| labUpgrade                             | 27039           | 30763  | 27039  | 48639  | 29      |
+| plasmaEngineeringUpgrade               | 50329           | 56962  | 50329  | 70229  | 9       |
+| plasmaProjectorBuild                   | 52438           | 52438  | 52438  | 52438  | 1       |
+| quartzMineUpgrade                      | 22362           | 32177  | 40562  | 40562  | 26      |
+| scraperBuild                           | 52880           | 52880  | 52880  | 52880  | 1       |
+| shieldTechUpgrade                      | 45316           | 49296  | 45316  | 65216  | 20      |
+| spacetimeWarpUpgrade                   | 45418           | 49840  | 45418  | 65318  | 18      |
+| sparrowBuild                           | 45252           | 45252  | 45252  | 45252  | 1       |
+| steelMineUpgrade                       | 22240           | 30968  | 29528  | 39552  | 37      |
+| thrustPropulsionUpgrade                | 50240           | 60190  | 60190  | 70140  | 6       |
+| tritiumMineUpgrade                     | 22770           | 32484  | 41452  | 41452  | 25      |
+| warpDriveUpgrade                       | 50251           | 60201  | 60201  | 70151  | 6       |
+| weaponsDevelopmentUpgrade              | 42515           | 54455  | 62415  | 62415  | 5       |
+
+
+| src/tokens/STERC20.sol:STERC20 contract |                 |       |        |       |         |
+|-----------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                         | Deployment Size |       |        |       |         |
+| 745019                                  | 4436            |       |        |       |         |
+| Function Name                           | min             | avg   | median | max   | # calls |
+| balanceOf                               | 629             | 629   | 629    | 629   | 768     |
+| burn                                    | 3094            | 3094  | 3094   | 3094  | 750     |
+| mint                                    | 3012            | 22171 | 3012   | 48812 | 111     |
+| setMinter                               | 22745           | 22745 | 22745  | 22745 | 84      |
+
+
+| src/tokens/STERC721.sol:STERC721 contract |                 |       |        |       |         |
+|-------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                           | Deployment Size |       |        |       |         |
+| 1341036                                   | 6981            |       |        |       |         |
+| Function Name                             | min             | avg   | median | max   | # calls |
+| balanceOf                                 | 722             | 2499  | 2722   | 2722  | 18      |
+| mint                                      | 68073           | 69948 | 70073  | 70073 | 16      |
+| ownerOf                                   | 602             | 602   | 602    | 602   | 4       |
+| setMinter                                 | 22767           | 22767 | 22767  | 22767 | 28      |
+| tokenOf                                   | 604             | 604   | 604    | 604   | 695     |
+
+
+
+Ran 6 test suites: 28 tests passed, 0 failed, 0 skipped (28 total tests)

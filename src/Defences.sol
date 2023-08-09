@@ -11,13 +11,13 @@ import {Structs as S} from "./libraries/Structs.sol";
  * Note: All functions are internal or internal pure, meaning they can only be called from this contract or contracts that inherit from it.
  */
 contract Defences {
-    mapping(uint256 => uint256) internal blasterAvailable;
+    mapping(uint256 => uint32) internal blasterAvailable;
 
-    mapping(uint256 => uint256) internal beamAvailable;
+    mapping(uint256 => uint32) internal beamAvailable;
 
-    mapping(uint256 => uint256) internal astralLauncherAvailable;
+    mapping(uint256 => uint32) internal astralLauncherAvailable;
 
-    mapping(uint256 => uint256) internal plasmaAvailable;
+    mapping(uint256 => uint32) internal plasmaAvailable;
 
     /**
      * @dev Calculates the cost of defense in terms of various resources based on the quantity.
@@ -26,11 +26,11 @@ contract Defences {
      * @return cost The total cost of the desired quantity of defenses.
      */
     function defencesCost(uint256 quantity, S.ERC20s memory _cost) internal pure returns (S.ERC20s memory) {
-        S.ERC20s memory cost;
-        cost.steel = _cost.steel * quantity;
-        cost.quartz = _cost.quartz * quantity;
-        cost.tritium = _cost.tritium * quantity;
-        return cost;
+        return S.ERC20s({
+            steel: _cost.steel * quantity,
+            quartz: _cost.quartz * quantity,
+            tritium: _cost.tritium * quantity
+        });
     }
 
     /**
@@ -47,9 +47,10 @@ contract Defences {
      * @param techs The current tech levels.
      */
     function beamRequirements(uint256 dockyardLevel, S.Techs memory techs) internal pure {
-        require(dockyardLevel >= 2, "Level 2 Dockyard is required");
-        require(techs.energyInnovation >= 2, "Level 2 Energy tech required");
-        require(techs.beamTechnology >= 3, "Level 3 Beam Tech required");
+        require(
+            dockyardLevel >= 2 && techs.energyInnovation >= 2 && techs.beamTechnology >= 3,
+            "Requirements not met: Level 2 Dockyard, Level 2 Energy tech, Level 3 Beam Tech required"
+        );
     }
 
     /**
